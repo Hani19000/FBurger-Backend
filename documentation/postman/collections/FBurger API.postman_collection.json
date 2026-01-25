@@ -1,0 +1,325 @@
+{
+  "info": {
+    "name": "FBurger API",
+    "description": "Backend API for FBurger - A burger restaurant application with authentication, products, reviews, users management, and dashboard statistics.\n\n## Authentication\nMost endpoints require JWT authentication via Bearer token in the Authorization header.\n\n## Base URL\nUse the `{{baseUrl}}` variable (default: http://localhost:3000/api)\n\n## Roles\n- **admin**: Full access to all endpoints\n- **user**: Can view products and create reviews\n- **visitor**: Can view products and create account",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health",
+            "description": "Check if the API server is running and healthy."
+          }
+        }
+      ],
+      "description": "API health monitoring endpoints"
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/register",
+            "description": "Register a new user account.\n\n**Validation:**\n- userName: 3-30 characters\n- email: Valid email format\n- password: Min 8 chars, must contain uppercase, lowercase, number, and special character"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Authenticate user and receive access token. Refresh token is set as HTTP-only cookie."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/auth/logout",
+            "description": "Logout current user and invalidate refresh token."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/auth/refresh",
+            "description": "Get a new access token using the refresh token stored in cookies."
+          }
+        }
+      ],
+      "description": "Authentication endpoints for user registration, login, logout, and token refresh."
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/products",
+            "description": "Retrieve all products. This is a public endpoint."
+          }
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/products/:id",
+            "description": "Retrieve a specific product by its ID. This is a public endpoint."
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Classic Burger\",\n  \"category\": \"Burgers\",\n  \"image\": \"https://example.com/images/classic-burger.jpg\",\n  \"price\": 9.99,\n  \"description\": \"Our signature beef burger with fresh lettuce, tomato, and special sauce.\"\n}"
+            },
+            "url": "{{baseUrl}}/products",
+            "description": "Create a new product. Requires admin authentication.\n\n**Validation:**\n- name: 3-100 characters\n- category: Required\n- image: Valid URL\n- price: Positive number\n- description: Max 1000 characters"
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Classic Burger Deluxe\",\n  \"price\": 11.99,\n  \"description\": \"Updated description for our deluxe burger.\"\n}"
+            },
+            "url": "{{baseUrl}}/products/:id",
+            "description": "Update an existing product. Requires admin authentication. All fields are optional."
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/products/:id",
+            "description": "Delete a product by ID. Requires admin authentication."
+          }
+        }
+      ],
+      "description": "Product management endpoints. Public access for viewing, admin access required for create/update/delete."
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Get All Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/reviews",
+            "description": "Retrieve all reviews. This is a public endpoint."
+          }
+        },
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"content\": \"Amazing burgers! The Classic Burger is absolutely delicious. Will definitely come back!\"\n}"
+            },
+            "url": "{{baseUrl}}/reviews",
+            "description": "Create a new review. Requires authentication.\n\n**Validation:**\n- rating: Integer between 1-5\n- content: 10-500 characters"
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"content\": \"Updated review content - still great burgers!\"\n}"
+            },
+            "url": "{{baseUrl}}/reviews/:id",
+            "description": "Update an existing review. Requires admin authentication."
+          }
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/reviews/:id",
+            "description": "Delete a review by ID. Requires admin authentication."
+          }
+        }
+      ],
+      "description": "Review management endpoints. Public access for viewing, authenticated users can create, admins can update/delete."
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/users",
+            "description": "Retrieve all users. Requires admin authentication."
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/users/:userId",
+            "description": "Delete a user by ID. Requires admin authentication. Admin cannot delete their own account."
+          }
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleName\": \"admin\"\n}"
+            },
+            "url": "{{baseUrl}}/users/:userId/role",
+            "description": "Update a user's role. Requires admin authentication.\n\n**Valid roles:** admin, user, visitor"
+          }
+        }
+      ],
+      "description": "User management endpoints. All endpoints require admin authentication."
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/dashboard/stats",
+            "description": "Get dashboard statistics including total counts of users, products, and reviews. Requires admin authentication."
+          }
+        }
+      ],
+      "description": "Dashboard endpoints for admin statistics and analytics."
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    }
+  ]
+}

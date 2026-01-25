@@ -1,0 +1,549 @@
+{
+  "info": {
+    "_postman_id": "5f80d244-c942-411b-aec4-70fd593c07ba",
+    "name": "FBurger",
+    "description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "id": "5581de01-7b15-4a62-b687-0f17190bdf87",
+          "request": {
+            "method": "POST",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "id": "1610e97b-81d4-4c02-8129-bd63f8aaab45",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM1OTMwMSwiZXhwIjoxNzY5MzYwMjAxfQ.3t6E0_UOk7TeCJIjSxGKEraYVUqrHdbkSjt5z0mDnyE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"email\": \"hani27@gmail.com\",\n\"password\": \"Setif/,19000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "id": "cf0587b7-b323-4fe1-bb0e-aa634cc7d59a",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM1OTU4NCwiZXhwIjoxNzY5MzYwNDg0fQ.8PpXy2myVugU8EOxmUsO6m_XwwmxrM73iHkdQaPnask",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/auth/logout",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "36762735-2f58-48bc-aab3-aa0be5f08f2b"
+    },
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "Add",
+          "id": "0f1f64aa-9354-44e0-a686-3e328d38194e",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM1OTU4NCwiZXhwIjoxNzY5MzYwNDg0fQ.8PpXy2myVugU8EOxmUsO6m_XwwmxrM73iHkdQaPnask",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Burger cramé\",\r\n    \"description\": \"Une description assez longue pour le validateur\",\r\n    \"price\": 10.50,\r\n    \"category\": \"Burgers\",\r\n    \"image\": \"https://images.unsplash.com/photo-1568901346375-23c9450c58cd\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/products/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "products",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "id": "bdc21428-8f6a-4d68-a211-274a234fdc41",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM1OTU4NCwiZXhwIjoxNzY5MzYwNDg0fQ.8PpXy2myVugU8EOxmUsO6m_XwwmxrM73iHkdQaPnask",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"le burger incroyable\",\r\n    \"description\": \"un burger exceptionnelle fondant\",\r\n    \"price\": 5.50,\r\n    \"categorie\": \"boissons\",\r\n    \"image\": \"https://images.unsplash.com/photo-1568901346375-23c9450c58cd\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/products/5ac950a0-9a55-4938-8d75-e341a511491a",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "products",
+                "5ac950a0-9a55-4938-8d75-e341a511491a"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get producs",
+          "id": "a7004e84-3f66-4f33-9ad5-18289ad1245a",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "id": "d77ed296-ff2b-4a1e-8a7e-9356daa8d348",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM1OTU4NCwiZXhwIjoxNzY5MzYwNDg0fQ.8PpXy2myVugU8EOxmUsO6m_XwwmxrM73iHkdQaPnask",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/products/5ac950a0-9a55-4938-8d75-e341a511491a",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "products",
+                "5ac950a0-9a55-4938-8d75-e341a511491a"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "9a251111-bc01-4f43-b79e-8da5861faeaa"
+    },
+    {
+      "name": "review",
+      "item": [
+        {
+          "name": "add",
+          "id": "f7511d39-8be0-4a0c-b8f7-b5ac6cc375fb",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM1OTU4NCwiZXhwIjoxNzY5MzYwNDg0fQ.8PpXy2myVugU8EOxmUsO6m_XwwmxrM73iHkdQaPnask",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"rating\": 5,\r\n    \"content\": \"Le meilleur burger que j'ai mangé ! La sauce est exceptionnelle.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/reviews",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get reviews",
+          "id": "b563bbda-8383-4cef-8870-4115ade3d55e",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM1ODcyMSwiZXhwIjoxNzY5MzU5NjIxfQ.9vQl9SLwTd2aWV_svcBAPYmK9jXUheyjNr3NTPINKzw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/reviews",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "id": "06a8a791-2f5f-4975-b28e-69c815c711b2",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM1OTU4NCwiZXhwIjoxNzY5MzYwNDg0fQ.8PpXy2myVugU8EOxmUsO6m_XwwmxrM73iHkdQaPnask",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"rating\": 4,\r\n    \"content\": \"Le meilleur burger de ma vie, c'était juste exceptionellemeent incroyable.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/reviews/697645a45f35ba4a893acb65",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "reviews",
+                "697645a45f35ba4a893acb65"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "id": "4403d2e2-c0fb-484a-81e3-f2d1dcde85b7",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM1OTU4NCwiZXhwIjoxNzY5MzYwNDg0fQ.8PpXy2myVugU8EOxmUsO6m_XwwmxrM73iHkdQaPnask",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/reviews/697645a45f35ba4a893acb65",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "reviews",
+                "697645a45f35ba4a893acb65"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "d0a21a15-5a0f-406d-ad0c-c4f15ead1461"
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "users",
+          "id": "0c5e87a1-624a-42f9-a346-4fea0827e25c",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM2MDQxNywiZXhwIjoxNzY5MzYxMzE3fQ.cYL_9grX3sLlTX-h1fiCT9MLd0PJNFgnu0xVLoWdfLo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "id": "b60922de-2164-412c-a292-ae2e433f02a3",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM2MDkzMiwiZXhwIjoxNzY5MzYxODMyfQ.nCnqn40-slEFoAAAn4GMJVeLtmgiHRh7cIUBpBPYaaw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"roleName\": \"admin\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/users/3bc89d02-126d-4cd3-8bc1-5bdc92dd0668/role",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "users",
+                "3bc89d02-126d-4cd3-8bc1-5bdc92dd0668",
+                "role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "id": "80e473af-5380-40f0-9b32-3c83ed347d63",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYwNGY0NWU4LTFjNjktNDVlOS04OTI3LTYxMzNlOGMxMWIwZiIsInJvbGVJZCI6MSwicm9sZU5hbWUiOiJhZG1pbiIsImlhdCI6MTc2OTM2MDQxNywiZXhwIjoxNzY5MzYxMzE3fQ.cYL_9grX3sLlTX-h1fiCT9MLd0PJNFgnu0xVLoWdfLo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": []
+          },
+          "response": []
+        }
+      ],
+      "id": "5f33310f-d15f-4345-94ec-546e9a5238a1"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "530bbdd9-38d3-441e-92dc-61f171c18dc2",
+      "key": "id",
+      "value": "1"
+    },
+    {
+      "id": "57b5ecc1-1ffd-4eb5-a9a4-fa78c5251c5d",
+      "key": "base_url",
+      "value": "https://template.postman-echo.com"
+    }
+  ]
+}
