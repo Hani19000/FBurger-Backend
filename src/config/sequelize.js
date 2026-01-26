@@ -12,10 +12,10 @@ export const pgSequelize = new Sequelize(
     dialect: 'postgres',
     logging: (msg) => logger.debug(msg),
     dialectOptions: {
-      ssl: {
+      ssl: ENV.server.nodeEnv === 'production' ? {
         require: true,
-        rejectUnauthorized: false
-      }
+        rejectUnauthorized: false // obligatoire pour Render
+      } : false // Désactivation du SSL en local
     }
   }
 );
