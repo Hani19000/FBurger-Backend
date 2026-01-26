@@ -1,19 +1,9 @@
-export { pgSequelize } from './sequelize.js';
+
 import mongoose from 'mongoose';
 import { ENV } from './environment.js';
 import { logger } from '../utils/logger.js';
 
-
-export const connectPostgres = async () => {
-    try {
-        await pgSequelize.authenticate();
-        logger.info('PostgreSQL connected via Sequelize');
-    } catch (error) {
-        logger.error('PostgreSQL connection error:', error);
-        throw error;
-    }
-};
-
+export {pgSequelize, connectPostgres} from './sequelize.js'
 
 export const connectMongoDB = async () => {
     try {
