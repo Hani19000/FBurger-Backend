@@ -5,6 +5,7 @@ import { loggerMiddleware } from './middlewares/logger.middleware.js';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler.middleware.js';
 import router from './routes/index.js';
 import * as Sentry from '@sentry/node';
+import { getHealth } from './controllers/health.controller.js';
 
 const app = express();
 
@@ -25,7 +26,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api', router);
-app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok' }));
+app.get('/api/health', getHealth);
 
 Sentry.setupExpressErrorHandler(app);
 
