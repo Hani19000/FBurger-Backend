@@ -25,8 +25,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
-app.use('/api', router);
 app.get('/api/health', getHealth);
+app.use('/api', router);
 
 Sentry.setupExpressErrorHandler(app);
 

@@ -1,4 +1,4 @@
-import { pgSequelize } from './sequelize.js';
+export { pgSequelize } from './sequelize.js';
 import mongoose from 'mongoose';
 import { ENV } from './environment.js';
 import { logger } from '../utils/logger.js';
