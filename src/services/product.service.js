@@ -8,6 +8,7 @@ export const productService = {
         const queryOptions = { ...defaults, ...options };
         const result = await ProductRepository.findAll(queryOptions);
         return result.rows ? result.rows : result;
+        return data || [];
     },
 
     getProductById: async (id) => {
