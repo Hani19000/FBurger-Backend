@@ -22,8 +22,8 @@ export const ProductRepository = {
         return await Product.create({
             name,
             categorie: category,
-            image_url,
-            prix,
+            image_url: image,
+            prix: price,
             description,
         });
     },
