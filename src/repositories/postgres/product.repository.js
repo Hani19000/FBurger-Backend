@@ -21,9 +21,9 @@ export const ProductRepository = {
     create: async ({ name, category, image, price, description }) => {
         return await Product.create({
             name,
-            categorie: category, 
-            image: image,        
-            price: price,        
+            categorie: category,
+            image_url,
+            prix,
             description,
         });
     },
