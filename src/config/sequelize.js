@@ -24,7 +24,7 @@ export const connectPostgres = async () => {
   try {
     await import('../models/postgres/index.js');
     await pgSequelize.authenticate();
-    await pgSequelize.sync({ alter: true });
+    // await pgSequelize.sync({ alter: true }); //pas de synchro automatique
 
     logger.info('PostgreSQL: Connected & Synchronized');
   } catch (error) {

@@ -152,4 +152,4 @@ SELECT 'Produits créés:' AS info, COUNT(*) AS count FROM products;
 SELECT 'Utilisateurs créés:' AS info, COUNT(*) AS count FROM users;
 
 -- Afficher les catégories de produits disponibles
-SELECT 'Catégories disponibles:' AS info, DISTINCT categorie FROM products ORDER BY categorie;
+SELECT DISTINCT categorie, 'Catégories disponibles:' AS info FROM products ORDER BY categorie;
