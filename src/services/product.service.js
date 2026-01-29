@@ -6,7 +6,8 @@ export const productService = {
     getAllProducts: async (options) => {
         const defaults = { limit: 20, page: 1 };
         const queryOptions = { ...defaults, ...options };
-        return await ProductRepository.findAll(queryOptions);
+        const result = await ProductRepository.findAll(queryOptions);
+        return result.rows ? result.rows : result;
     },
 
     getProductById: async (id) => {
