@@ -103,19 +103,10 @@ DELETE FROM products;
 
 -- BURGERS
 INSERT INTO products (name, categorie, prix, description, image_url) VALUES 
-('Burger cramé', 'Burger', 10.00, 'Notre burger signature', 'URL_IMAGE');
-
--- POULETS
-INSERT INTO products (name, categorie, prix, description, image_url) VALUES 
-('Wings', 'Poulets', 10.00, 'Ailes de poulet croustillantes', 'URL_IMAGE');
-
--- FRITES
-INSERT INTO products (name, categorie, prix, description, image_url) VALUES 
-('Frites bacon', 'Frites', 10.00, 'Frites avec éclats de bacon', 'URL_IMAGE');
-
--- BOISSONS
-INSERT INTO products (name, categorie, prix, description, image_url) VALUES 
-('Coca-Cola', 'Boissons', 2.50, '33cl', 'URL_IMAGE');
+('Burger Signature', 'Burger', 12.00, 'Le classique de la maison', '/images/card1.png'),
+('Frites Maison', 'Frites', 4.50, 'Pommes de terre fraîches et croustillantes', '/images/card2.png'),
+('Wings de Poulet', 'Poulets', 10.00, 'Ailes de poulet croustillantes', '/images/card3.png'),
+('Coca-Cola', 'Boissons', 2.50, 'Canette 33cl', '/images/card4.png');
 
 
 -- CRÉATION UTILISATEUR ADMIN 

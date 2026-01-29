@@ -14,11 +14,7 @@ router.get('/:id', getProductById);
 router.use(authenticateToken, requireAdmin);
 
 // Route de création (une seule fois avec les validateurs)
-router.post('/', 
-    createProductValidation, 
-    handleValidationErrors, 
-    createProduct
-);
+router.post('/', createProductValidation, handleValidationErrors, createProduct);
 
 router.put('/:id', updateProductValidation, handleValidationErrors, updateProduct);
 router.delete('/:id', deleteProduct);
