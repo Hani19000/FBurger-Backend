@@ -7,7 +7,7 @@ export const productService = {
         const defaults = { limit: 20, page: 1 };
         const queryOptions = { ...defaults, ...options };
         const result = await ProductRepository.findAll(queryOptions);
-        return result.rows ? result.rows : result;
+        const data = result.rows ? result.rows : result;
         return data || [];
     },
 
