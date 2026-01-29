@@ -10,7 +10,7 @@ export const pgSequelize = new Sequelize(
     host: ENV.database.postgres.host,
     port: ENV.database.postgres.port,
     dialect: 'postgres',
-    logging: (msg) => logger.debug(msg),
+    logging: false,
     dialectOptions: {
       ssl: ENV.server.nodeEnv === 'production' ? {
         require: true,
@@ -22,22 +22,14 @@ export const pgSequelize = new Sequelize(
 
 export const connectPostgres = async () => {
   try {
-    // 1. Charger TOUS les modèles AVANT authenticate
-    logger.info('Loading PostgreSQL models...');
     await import('../models/postgres/index.js');
-    logger.info('PostgreSQL models loaded');
-
-    // 2. Vérifier la connexion
     await pgSequelize.authenticate();
-    logger.info('PostgreSQL connected via Sequelize');
+    await pgSequelize.sync({ alter: true });
 
-    // 3. Synchroniser (force: false pour ne pas drop les tables)
-    logger.info('Synchronizing database tables...');
-    await pgSequelize.sync({ force: false, alter: true });
-    logger.info('PostgreSQL tables synchronized successfully');
-  } catch (err) {
-    logger.error('PostgreSQL connection/sync failed', err);
-    throw err;
+    logger.info('PostgreSQL: Connected & Synchronized');
+  } catch (error) {
+    logger.error('PostgreSQL: Connection failed', error);
+    throw error;
   }
 };
 

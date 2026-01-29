@@ -6,7 +6,7 @@ import { ENV } from './environment.js';
 import { ERRORS } from '../constants/errors.js';
 import { logger } from '../utils/logger.js';
 
-const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'];
+const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173'];
 
 export const helmetMiddleware = helmet({
     contentSecurityPolicy: {
@@ -38,7 +38,7 @@ export const corsMiddleware = cors({
 export const generalLimiter = rateLimit({
     windowMs: ENV.rateLimit.windowMs,
     max: ENV.rateLimit.max,
-    keyGenerator: (req) => ipKeyGenerator(req), 
+    keyGenerator: (req) => ipKeyGenerator(req),
     standardHeaders: true,
     legacyHeaders: false,
     validate: { ip: false }
@@ -47,7 +47,7 @@ export const generalLimiter = rateLimit({
 export const authLimiter = rateLimit({
     windowMs: ENV.rateLimit.windowMs,
     max: Math.floor(ENV.rateLimit.max / 2),
-    keyGenerator: (req) => ipKeyGenerator(req), 
+    keyGenerator: (req) => ipKeyGenerator(req),
     validate: { ip: false },
     handler: (req, res) => {
         logger.warn(`Tentative de spam détectée depuis l'IP : ${req.ip}`);

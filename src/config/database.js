@@ -2,8 +2,9 @@
 import mongoose from 'mongoose';
 import { ENV } from './environment.js';
 import { logger } from '../utils/logger.js';
+import { pgSequelize, connectPostgres } from './sequelize.js';
 
-export {pgSequelize, connectPostgres} from './sequelize.js'
+export {pgSequelize, connectPostgres}
 
 export const connectMongoDB = async () => {
     try {
