@@ -11,4 +11,5 @@ export const Product = pgSequelize.define('Product', {
 }, {
     tableName: 'products',
     timestamps: true,
+    underscored: true,
 });

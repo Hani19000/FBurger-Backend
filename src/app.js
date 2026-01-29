@@ -24,6 +24,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use('/images', express.static('public/images'));
+
 // Routes
 app.get('/api/health', getHealth);
 app.use('/api', router);
