@@ -14,14 +14,16 @@ export const UserRepository = {
         return await User.findAll();
     },
 
-    create: async ({ userName, email, passwordHash, salt, roleId = ROLES.USER }) => {
-        console.log("Repo: Tentative de création pour", username);
+    create: async (data) => {
+        console.log("Repo: Tentative de création pour", data.username || data.userName);
+
         return await User.create({
-            username: userName,
-            email: email,
-            password: passwordHash,
-            salt: salt,
-            roleId: roleId
+            // data.prop pour éviter les ReferenceError de destructuration
+            username: data.username || data.userName,
+            email: data.email,
+            password: data.passwordHash || data.password,
+            salt: data.salt,
+            roleId: data.roleId
         });
     },
 
