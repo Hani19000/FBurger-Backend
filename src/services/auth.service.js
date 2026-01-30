@@ -6,59 +6,58 @@ import { AppError } from '../utils/appError.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
 import { Role, User } from '../models/postgres/index.js';
 
+// Fonction helper interne pour éviter la répétition (DRY)
+async function createAuthSession(user) {
+    const accessToken = tokenService.generateAccessToken(user);
+    const refreshToken = tokenService.generateRefreshToken(user);
+    await sessionService.createSession(user.id, refreshToken);
+
+    return { user, accessToken, refreshToken };
+}
+
 export const authService = {
     register: async ({ userName, email, password }) => {
-        // 1. Vérification email
+        // 1. Vérification existance
         const existing = await UserRepository.findByEmail(email);
-        if (existing) throw new AppError('Email already registered', HTTP_STATUS.CONFLICT);
+        if (existing) throw new AppError('Email déjà utilisé', HTTP_STATUS.CONFLICT);
 
-        // 2. Récupération du rôle
-        const userRole = await Role.findOne({ where: { name: 'user' } });
-        if (!userRole) {
-            throw new AppError('Default role not found', HTTP_STATUS.INTERNAL_SERVER_ERROR);
-        }
+        // 2. Gestion du rôle par défaut (UTILISATEUR en majuscules)
+        const userRole = await Role.findOne({ where: { name: 'UTILISATEUR' } });
+        if (!userRole) throw new AppError('Configuration serveur : Rôle introuvable', 500);
 
+        // 3. Sécurité
         const salt = passwordService.generateSalt();
-        const hash = await passwordService.hashPassword(password, salt);
+        const passwordHash = await passwordService.hashPassword(password, salt);
 
-        // 3. Création de l'utilisateur
+        // 4. Création
         const user = await UserRepository.create({
-            userName: userName,
-            email: email,
-            passwordHash: hash, 
-            salt: salt,
-            roleId: userRole.id  
+            userName,
+            email,
+            passwordHash,
+            salt,
+            roleId: userRole.id
         });
 
-        const accessToken = tokenService.generateAccessToken(user);
-        const refreshToken = tokenService.generateRefreshToken(user);
-
-        await sessionService.createSession(user.id, refreshToken);
-        return { user, accessToken, refreshToken };
+        // 5. Tokens & Session
+        return await createAuthSession(user);
     },
 
     login: async (email, password) => {
         const user = await User.findOne({
             where: { email },
-            include: [{
-                model: Role,
-                as: 'Role'
-            }]
+            include: [{ model: Role, as: 'Role' }]
         });
 
-        if (!user) throw new AppError('Invalid credentials', HTTP_STATUS.UNAUTHORIZED);
+        if (!user) throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
 
-        const valid = await passwordService.comparePassword(password, user.password, user.salt);
-        if (!valid) throw new AppError('Invalid credentials', HTTP_STATUS.UNAUTHORIZED);
+        const isValid = await passwordService.comparePassword(password, user.password, user.salt);
+        if (!isValid) throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
 
-        const accessToken = tokenService.generateAccessToken(user);
-        const refreshToken = tokenService.generateRefreshToken(user);
-
-        await sessionService.createSession(user.id, refreshToken);
-        return { user, accessToken, refreshToken };
+        return await createAuthSession(user);
     },
 
     logout: async (refreshToken) => {
+        if (!refreshToken) return;
         await sessionService.deleteSession(refreshToken);
     },
 
