@@ -2,7 +2,7 @@
 
 DROP TABLE IF EXISTS sessions CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS products CASCADE;
+-- DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS roles CASCADE;
 
 
@@ -23,12 +23,12 @@ CREATE INDEX IF NOT EXISTS idx_roles_name ON roles(name);
 
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  userName VARCHAR(255) NOT NULL,
+  username VARCHAR(255) NOT NULL,   
   email VARCHAR(255) UNIQUE NOT NULL,
-  passwordHash VARCHAR(255) NOT NULL,
+  passwordhash VARCHAR(255) NOT NULL,
   salt VARCHAR(255) NOT NULL,
   role_id INTEGER REFERENCES roles(id) ON DELETE SET NULL,
-  createdAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  createdat TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   is_active BOOLEAN DEFAULT true
 );
 
@@ -99,14 +99,16 @@ ON CONFLICT (name) DO NOTHING;
 
 
 -- INSERTION DES PRODUITS INITIAUX
-DELETE FROM products;
+-- DELETE FROM products;
 
--- BURGERS
-INSERT INTO products (name, categorie, prix, description, image_url) VALUES 
-('Burger Signature', 'Burger', 12.00, 'Le classique de la maison', '/images/card1.png'),
-('Frites Maison', 'Frites', 4.50, 'Pommes de terre fraîches et croustillantes', '/images/card2.png'),
-('Wings de Poulet', 'Poulets', 10.00, 'Ailes de poulet croustillantes', '/images/card3.png'),
-('Coca-Cola', 'Boissons', 2.50, 'Canette 33cl', '/images/card4.png');
+-- INSERTION DES PRODUITS (Seulement s'ils n'existent pas déjà)
+INSERT INTO products (id, name, categorie, prix, description, image_url)
+VALUES 
+(gen_random_uuid(), 'Burger Signature', 'Burger', 12.00, 'Le classique de la maison', '/images/card1.png'),
+(gen_random_uuid(), 'Frites Maison', 'Frites', 4.50, 'Pommes de terre fraîches', '/images/card2.png'),
+(gen_random_uuid(), 'Wings de Poulet', 'Poulets', 10.00, 'Ailes croustillantes', '/images/card3.png'),
+(gen_random_uuid(), 'Coca-Cola', 'Boissons', 2.50, 'Canette 33cl', '/images/card4.png')
+ON CONFLICT DO NOTHING; -- ✅ Évite les erreurs si les produits sont déjà là
 
 
 -- CRÉATION UTILISATEUR ADMIN 

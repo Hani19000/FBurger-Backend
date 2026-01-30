@@ -15,7 +15,7 @@ export const UserRepository = {
     },
 
     create: async ({ userName, email, passwordHash, salt, roleId = ROLES.USER }) => {
-        return await User.create({
+        return User.create({
             username: userName,
             email,
             password: passwordHash,

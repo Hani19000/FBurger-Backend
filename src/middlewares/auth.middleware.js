@@ -1,8 +1,8 @@
-import { tokenService } from '../services/token.service.js'; 
+import { tokenService } from '../services/token.service.js';
 import { AppError } from '../utils/appError.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
 
-export const authenticateToken = async (req, res, next) => {
+export const authenticateToken = async (req, next) => {
     const authHeader = req.headers.authorization;
     const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
 
@@ -12,13 +12,13 @@ export const authenticateToken = async (req, res, next) => {
     if (!payload) return next(new AppError('Invalid or expired access token', HTTP_STATUS.UNAUTHORIZED));
 
     // stocke tout le payload dans req.user
-    req.user = { 
-        id: payload.id, 
-        roleId: payload.roleId, 
-        roleName: payload.roleName 
+    req.user = {
+        id: payload.id,
+        roleId: payload.roleId,
+        roleName: payload.roleName
     };
-    
-    next(); 
+
+    next();
 };
 
 export const requireRole = (...allowedRoles) => {

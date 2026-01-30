@@ -1,5 +1,4 @@
 import { Session } from '../../models/postgres/session.model.js';
-import jwt from 'jsonwebtoken';
 import { ENV } from '../../config/environment.js';
 import { Op } from 'sequelize';
 
