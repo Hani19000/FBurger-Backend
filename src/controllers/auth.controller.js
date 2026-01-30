@@ -12,23 +12,38 @@ const COOKIE_OPTIONS = {
     maxAge: 7 * 24 * 60 * 60 * 1000
 };
 
+
+const ACCESS_TOKEN_OPTIONS = {
+    ...COOKIE_OPTIONS,
+    maxAge: 15 * 60 * 1000 // 15 minutes
+};
+
 export const register = asyncHandler(async (req, res) => {
     const { user, accessToken, refreshToken } = await authService.register(req.body);
+    res.cookie('accessToken', accessToken, ACCESS_TOKEN_OPTIONS);
     res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
-    sendSuccess(res, HTTP_STATUS.CREATED, { user, accessToken });
+    sendSuccess(res, HTTP_STATUS.OK, { user });
 });
 
 export const login = asyncHandler(async (req, res) => {
     const { user, accessToken, refreshToken } = await authService.login(req.body.email, req.body.password);
+    res.cookie('accessToken', accessToken, ACCESS_TOKEN_OPTIONS);
     res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
-    sendSuccess(res, HTTP_STATUS.OK, { user, accessToken });
+    sendSuccess(res, HTTP_STATUS.OK, { user });
 });
 
 export const logout = asyncHandler(async (req, res) => {
     const { refreshToken } = req.cookies;
+
+    // 1. Supprimer la session en DB
     if (refreshToken) await authService.logout(refreshToken);
-    res.clearCookie('refreshToken', { ...COOKIE_OPTIONS, maxAge: 0 });
-    sendSuccess(res, HTTP_STATUS.OK, { message: 'Logout succesfly' });
+
+    // 2. Supprimer les cookies côté navigateur (IMPORTANT)
+    res.clearCookie('accessToken', ACCESS_TOKEN_OPTIONS);
+    res.clearCookie('refreshToken', COOKIE_OPTIONS);
+
+    // 3. Répondre au client
+    sendSuccess(res, HTTP_STATUS.OK, { message: 'Déconnexion réussie' });
 });
 
 export const refreshToken = asyncHandler(async (req, res) => {
@@ -39,7 +54,11 @@ export const refreshToken = asyncHandler(async (req, res) => {
     if (!session) throw new AppError('Invalid or expired refresh token', HTTP_STATUS.UNAUTHORIZED);
 
     const { accessToken } = await authService.refreshAccessToken(refreshToken);
-    sendSuccess(res, HTTP_STATUS.OK, { accessToken });
+
+    // renvoie le nouveau token dans le cookie !
+    res.cookie('accessToken', accessToken, ACCESS_TOKEN_OPTIONS);
+
+    sendSuccess(res, HTTP_STATUS.OK, { message: 'Token rafraîchi' });
 });
 
 

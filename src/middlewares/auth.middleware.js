@@ -1,25 +1,39 @@
 import { tokenService } from '../services/token.service.js';
 import { AppError } from '../utils/appError.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
 
-export const authenticateToken = async (req, next) => {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+export const authenticateToken = asyncHandler(async (req, res, next) => {
+    try {
+        // 1. Extraction (Priorité au cookie pour la sécurité)
+        const token = req.cookies?.accessToken ||
+            (req.headers.authorization?.startsWith('Bearer ')
+                ? req.headers.authorization.split(' ')[1]
+                : null);
 
-    if (!token) return next(new AppError('Access token missing', HTTP_STATUS.UNAUTHORIZED));
+        if (!token) {
+            return next(new AppError('Access token missing', HTTP_STATUS.UNAUTHORIZED));
+        }
 
-    const payload = tokenService.verifyAccessToken(token);
-    if (!payload) return next(new AppError('Invalid or expired access token', HTTP_STATUS.UNAUTHORIZED));
+        // 2. Vérification
+        const payload = tokenService.verifyAccessToken(token);
+        if (!payload) {
+            return next(new AppError('Invalid or expired access token', HTTP_STATUS.UNAUTHORIZED));
+        }
 
-    // stocke tout le payload dans req.user
-    req.user = {
-        id: payload.id,
-        roleId: payload.roleId,
-        roleName: payload.roleName
-    };
+        // 3. // stocke tout le payload dans req.user
+        req.user = {
+            id: payload.id,
+            roleId: payload.roleId,
+            roleName: payload.roleName
+        };
 
-    next();
-};
+        next();
+    } catch (error) {
+        // Crucial pour les middlewares async : on passe l'erreur au catch-all d'Express
+        next(error);
+    }
+});
 
 export const requireRole = (...allowedRoles) => {
     return (req, _res, next) => {
@@ -30,5 +44,5 @@ export const requireRole = (...allowedRoles) => {
     };
 };
 
-export const requireAdmin = requireRole('admin');
-export const requireUser = requireRole('user');
+export const requireAdmin = requireRole('ADMIN');
+export const requireUser = requireRole('UTILISATEUR');
