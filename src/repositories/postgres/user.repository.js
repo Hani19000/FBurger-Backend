@@ -14,7 +14,8 @@ export const UserRepository = {
         return await User.findAll();
     },
 
-    create: async ({ userName, email, passwordHash, salt, roleId = ROLES.USER }) => {
+    create: async ({ username, email, passwordHash, salt, roleId = ROLES.USER }) => {
+        console.log("Repo: Tentative de création pour", username);
         return await User.create({
             username: userName,
             email: email,

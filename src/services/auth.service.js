@@ -16,7 +16,7 @@ async function createAuthSession(user) {
 }
 
 export const authService = {
-    register: async ({ userName, email, password }) => {
+    register: async ({ username, email, password }) => {
         // 1. Vérification existance
         const existing = await UserRepository.findByEmail(email);
         if (existing) throw new AppError('Email déjà utilisé', HTTP_STATUS.CONFLICT);
@@ -31,7 +31,7 @@ export const authService = {
 
         // 4. Création
         const user = await UserRepository.create({
-            userName: userName,
+            username: username,
             email: email,
             passwordHash: passwordHash,
             salt: salt,
