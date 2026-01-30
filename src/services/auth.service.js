@@ -31,10 +31,10 @@ export const authService = {
 
         // 4. Création
         const user = await UserRepository.create({
-            userName,
-            email,
-            passwordHash,
-            salt,
+            userName: userName,
+            email: email,
+            passwordHash: passwordHash,
+            salt: salt,
             roleId: userRole.id
         });
 
