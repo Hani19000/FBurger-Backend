@@ -4,11 +4,13 @@ import { sendSuccess } from '../utils/response.js';
 import { AppError } from '../utils/appError.js';
 import { sessionService } from '../services/session.service.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
+import { User, Role } from '../models/postgres/index.js';
 
 const COOKIE_OPTIONS = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'none',
+    secure: true,
     maxAge: 7 * 24 * 60 * 60 * 1000
 };
 
