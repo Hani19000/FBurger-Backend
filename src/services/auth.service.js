@@ -38,8 +38,12 @@ export const authService = {
             roleId: userRole.id
         });
 
+        const userWithRole = await User.findOne({
+            where: { id: user.id },
+            include: [{ model: Role, as: 'Role' }]
+        });
         // 5. Tokens & Session
-        return await createAuthSession(user);
+        return await createAuthSession(userWithRole);
     },
 
     login: async (email, password) => {

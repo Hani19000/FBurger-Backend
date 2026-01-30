@@ -3,7 +3,11 @@ import { ENV } from '../config/environment.js';
 
 export const tokenService = {
     generateAccessToken: (user) => {
-        return jwt.sign({ id: user.id, roleId: user.roleId, roleName: user.Role.name }, ENV.jwt.accessTokenSecret, {
+        return jwt.sign({
+            id: user.id,
+            roleId: user.roleId,
+            roleName: user.Role?.name || 'USER'
+        }, ENV.jwt.accessTokenSecret, {
             expiresIn: ENV.jwt.accessTokenExpiry,
         });
     },
