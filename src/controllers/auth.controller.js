@@ -8,7 +8,7 @@ import { User, Role } from '../models/postgres/index.js';
 
 const COOKIE_OPTIONS = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    // secure: process.env.NODE_ENV === 'production',
     sameSite: 'none',
     secure: true,
     maxAge: 7 * 24 * 60 * 60 * 1000
