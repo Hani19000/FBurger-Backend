@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 
 export const registerValidation = [
-    body('userName')
+    body('username')
         .trim()
         .notEmpty().withMessage('Username is required')
         .isLength({ min: 3, max: 30 }).withMessage('Username must be 3-30 characters long'),
@@ -16,7 +16,7 @@ export const registerValidation = [
         .matches(/\d/).withMessage('Password must contain at least one number')
         .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
         .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter')
-        .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Password must contain at least one special character')
+        .matches(/[!@#$%^&*(),.?-_":{}|<>]/).withMessage('Password must contain at least one special character')
 ];
 
 export const loginValidation = [

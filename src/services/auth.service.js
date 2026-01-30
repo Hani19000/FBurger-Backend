@@ -21,7 +21,7 @@ export const authService = {
         const existing = await UserRepository.findByEmail(email);
         if (existing) throw new AppError('Email déjà utilisé', HTTP_STATUS.CONFLICT);
 
-        // 2. Gestion du rôle par défaut (UTILISATEUR en majuscules)
+        // 2. Gestion du rôle par défaut
         const userRole = await Role.findOne({ where: { name: 'UTILISATEUR' } });
         if (!userRole) throw new AppError('Configuration serveur : Rôle introuvable', 500);
 
