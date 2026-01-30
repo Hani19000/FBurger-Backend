@@ -3,7 +3,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendSuccess } from '../utils/response.js';
 import { AppError } from '../utils/appError.js';
 import { sessionService } from '../services/session.service.js';
-import {HTTP_STATUS} from '../constants/httpStatus.js';
+import { HTTP_STATUS } from '../constants/httpStatus.js';
 
 const COOKIE_OPTIONS = {
     httpOnly: true,
@@ -40,4 +40,11 @@ export const refreshToken = asyncHandler(async (req, res) => {
 
     const { accessToken } = await authService.refreshAccessToken(refreshToken);
     sendSuccess(res, HTTP_STATUS.OK, { accessToken });
+});
+
+
+export const getMe = asyncHandler(async (req, res) => {
+    if (!req.user) throw new AppError('Utilisateur non trouvé', HTTP_STATUS.NOT_FOUND);
+
+    sendSuccess(res, HTTP_STATUS.OK, req.user);
 });
