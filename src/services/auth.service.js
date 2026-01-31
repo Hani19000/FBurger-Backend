@@ -47,7 +47,7 @@ export const authService = {
     },
 
     login: async (email, password) => {
-        const user = await User.findOne({
+        const user = await User.scope('withPassword').findOne({
             where: { email },
             include: [{ model: Role, as: 'Role' }]
         });
