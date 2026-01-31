@@ -38,7 +38,7 @@ export const authService = {
             roleId: userRole.id
         });
 
-        const userWithRole = await User.findOne({
+        const userWithRole = await User.scope('withPassword').findOne({
             where: { id: user.id },
             include: [{ model: Role, as: 'Role' }]
         });
@@ -51,14 +51,17 @@ export const authService = {
             where: { email },
             include: [{ model: Role, as: 'Role' }]
         });
-
-        if (!user) throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
-
-        const isValid = await passwordService.comparePassword(password, user.passwordHash, user.salt);
-        if (!isValid) throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
-
+        if (!user) {
+            console.log("Debug: Utilisateur non trouvé pour l'email:", email);
+            throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
+        }
+        const isValid = await passwordService.comparePassword(password, user.passwordHash);
+        if (!isValid) {
+            throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
+        }
         return await createAuthSession(user);
     },
+
 
     logout: async (refreshToken) => {
         if (!refreshToken) return;
