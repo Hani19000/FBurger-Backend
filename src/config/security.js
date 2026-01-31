@@ -38,8 +38,8 @@ export const generalLimiter = rateLimit({
 });
 
 export const authLimiter = rateLimit({
-    windowMs: ENV.rateLimit.windowMs,
-    max: Math.floor(ENV.rateLimit.max / 2),
+    windowMs: ENV.rateLimit.authWindowMs,
+    max: ENV.rateLimit.authMax,
     keyGenerator: (req) => ipKeyGenerator(req),
     validate: { ip: false },
     handler: (req, res) => {
@@ -52,4 +52,19 @@ export const authLimiter = rateLimit({
     },
     standardHeaders: true,
     legacyHeaders: false,
+});
+
+export const reviewLimiter = rateLimit({
+    windowMs: ENV.rateLimit.reviewWindowMs,
+    max: ENV.rateLimit.reviewMax,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => {
+        logger.warn(`Tentative de spam détectée depuis l'IP : ${req.ip}`);
+        res.status(HTTP_STATUS.Too_Many_Requests).json({
+            status: 429,
+            error: ERRORS.AUTH.TOO_MANY_ATTEMPTS,
+            message: "Trop de tentatives, veuillez réessayer plus tard."
+        });
+    },
 });

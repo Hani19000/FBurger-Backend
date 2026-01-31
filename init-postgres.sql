@@ -108,20 +108,23 @@ VALUES
 (gen_random_uuid(), 'Frites Maison', 'Frites', 4.50, 'Pommes de terre fraîches', '/images/card2.png'),
 (gen_random_uuid(), 'Wings de Poulet', 'Poulets', 10.00, 'Ailes croustillantes', '/images/card3.png'),
 (gen_random_uuid(), 'Coca-Cola', 'Boissons', 2.50, 'Canette 33cl', '/images/card4.png')
-ON CONFLICT DO NOTHING; -- ✅ Évite les erreurs si les produits sont déjà là
+ON CONFLICT DO NOTHING; -- Évite les erreurs si les produits sont déjà là
 
 
 DO $$
 DECLARE
     admin_role_id INTEGER;
 BEGIN
-
-    SELECT id INTO admin_role_id FROM "Roles" WHERE name = 'ADMIN';
+    -- 1. "Roles" (maj + guillemets) devient roles (minuscule)
+    SELECT id INTO admin_role_id FROM roles WHERE name = 'ADMIN';
 
     IF admin_role_id IS NULL THEN
-        RAISE EXCEPTION 'Le rôle ADMIN n''existe pas en base de données. Vérifie la table Roles.';
+        RAISE EXCEPTION 'Le rôle ADMIN n''existe pas en base de données.';
     END IF;
-    INSERT INTO "Users" ("username", "email", "password", "salt", "roleId", "createdAt", "updatedAt")
+
+    -- 2. "Users" devient users et password -> passwordhash / roleId -> role_id / createdAt -> createdat
+    
+    INSERT INTO users (username, email, passwordhash, salt, role_id, createdat, is_active)
     VALUES (
         'Admin',
         'admin@fastfood.com',
@@ -129,7 +132,7 @@ BEGIN
         '$2b$12$LQv3c1yqBWVHxkd0LHAkCO',
         admin_role_id,
         NOW(),
-        NOW()
+        true
     )
     ON CONFLICT (email) DO NOTHING;
 
