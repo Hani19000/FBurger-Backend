@@ -10,7 +10,7 @@ import { getHealth } from './controllers/health.controller.js';
 const app = express();
 
 // Configuration Proxy pour Docker/Nginx
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
 
 // Middlewares de base & Sécurité
 app.use(loggerMiddleware);
