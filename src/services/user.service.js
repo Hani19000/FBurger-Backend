@@ -12,8 +12,7 @@ export const userService = {
     },
 
     getAllUsers: async () => {
-        const users = await UserRepository.findAll();
-        return users;
+        return await UserRepository.findAll();
     },
 
     deleteUser: async (userId) => {
