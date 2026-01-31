@@ -47,12 +47,13 @@ export const authService = {
     },
 
     login: async (email, password) => {
+        const normalizedEmail = email.toLowerCase();
         const user = await User.scope('withPassword').findOne({
             where: { email },
             include: [{ model: Role, as: 'Role' }]
         });
         if (!user) {
-            console.log("Debug: Utilisateur non trouvé pour l'email:", email);
+            console.log("Debug: Utilisateur non trouvé pour l'email:", normalizedEmail);
             throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
         }
         const isValid = await passwordService.comparePassword(password, user.passwordHash);
