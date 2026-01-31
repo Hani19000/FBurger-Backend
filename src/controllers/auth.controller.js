@@ -65,6 +65,9 @@ export const refreshToken = asyncHandler(async (req, res) => {
 
 
 export const getMe = asyncHandler(async (req, res) => {
+    if (!req.user?.id) {
+        return sendSuccess(res, HTTP_STATUS.OK, { user: null, authenticated: false });
+    }
     // req.user contient l'ID grâce au middleware authenticateToken
     const user = await User.findByPk(req.user.id, {
         include: [{ model: Role, as: 'Role' }],
