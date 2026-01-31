@@ -13,9 +13,7 @@ export const userService = {
 
     getAllUsers: async () => {
         const users = await UserRepository.findAll();
-        return users.map(user => {
-            return users;
-        });
+        return users;
     },
 
     deleteUser: async (userId) => {
@@ -30,6 +28,6 @@ export const userService = {
         const user = await UserRepository.updateRole(userId, role.id);
         if (!user) throw new AppError('User not found', HTTP_STATUS.NOT_FOUND);
 
-        return users;
+        return user;
     },
 };

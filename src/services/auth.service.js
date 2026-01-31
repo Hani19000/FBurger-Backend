@@ -48,18 +48,23 @@ export const authService = {
 
     login: async (email, password) => {
         const normalizedEmail = email.toLowerCase();
+
         const user = await User.scope('withPassword').findOne({
-            where: { email },
+            where: { email: normalizedEmail },
             include: [{ model: Role, as: 'Role' }]
         });
+
         if (!user) {
-            console.log("Debug: Utilisateur non trouvé pour l'email:", normalizedEmail);
             throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
         }
-        const isValid = await passwordService.comparePassword(password, user.passwordHash);
+
+        // Ajoute user.salt en 3ème paramètre pour PBKDF2
+        const isValid = await passwordService.comparePassword(password, user.passwordHash, user.salt);
+
         if (!isValid) {
             throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
         }
+
         return await createAuthSession(user);
     },
 

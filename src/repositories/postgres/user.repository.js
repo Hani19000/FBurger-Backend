@@ -18,10 +18,9 @@ export const UserRepository = {
         console.log("Repo: Tentative de création pour", data.username || data.userName);
 
         return await User.create({
-            // data.prop pour éviter les ReferenceError de destructuration
             username: data.username || data.userName,
             email: data.email,
-            password: data.passwordHash || data.password,
+            passwordHash: data.passwordHash || data.password,
             salt: data.salt,
             roleId: data.roleId
         });
