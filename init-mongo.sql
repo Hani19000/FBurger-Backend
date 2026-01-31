@@ -1,13 +1,13 @@
 db = db.getSiblingDB('fburger');
 
 
-db.avis.drop();
+db.reviews.drop();
 
-db.avis.insertMany([
+db.reviews.insertMany([
   {
     "rating": 5,
     "content": "Le Classic Burger est incroyable ! La viande est juteuse et le pain très frais.",
-    "user_id": "550e8400-e29b-41d4-a716-446655440000", // Format UUID cohérent avec Postgres
+    "user_id": "550e8400-e29b-41d4-a716-446655440000", -- Format UUID cohérent avec Postgres
     "product_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
     "createdAt": new Date()
   },
