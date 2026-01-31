@@ -11,7 +11,8 @@ export const authenticateToken = asyncHandler(async (req, _res, next) => {
             : null);
 
     if (!token) {
-        return next(new AppError('Access token missing', HTTP_STATUS.UNAUTHORIZED));
+        req.user = null;
+        return next();
     }
 
     // 2. Vérification
