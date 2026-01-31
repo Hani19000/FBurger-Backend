@@ -5,6 +5,7 @@ import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { ENV } from './environment.js';
 import { ERRORS } from '../constants/errors.js';
 import { logger } from '../utils/logger.js';
+import { HTTP_STATUS } from '../constants/httpStatus.js';
 
 // const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173'];
 
