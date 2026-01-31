@@ -8,15 +8,13 @@ export const userService = {
         const user = await UserRepository.findById(userId);
         if (!user) throw new AppError('User not found', HTTP_STATUS.NOT_FOUND);
 
-        const { password, salt, ...safeUser } = user.toJSON();
-        return safeUser;
+        return user;
     },
 
     getAllUsers: async () => {
         const users = await UserRepository.findAll();
         return users.map(user => {
-            const { password, salt, ...safeUser } = user.toJSON();
-            return safeUser;
+            return users;
         });
     },
 
@@ -32,7 +30,6 @@ export const userService = {
         const user = await UserRepository.updateRole(userId, role.id);
         if (!user) throw new AppError('User not found', HTTP_STATUS.NOT_FOUND);
 
-        const { passwordHash, salt, ...safeUser } = user.toJSON();
-        return safeUser;
+        return users;
     },
 };

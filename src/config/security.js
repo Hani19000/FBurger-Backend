@@ -6,7 +6,7 @@ import { ENV } from './environment.js';
 import { ERRORS } from '../constants/errors.js';
 import { logger } from '../utils/logger.js';
 
-const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173'];
+// const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173'];
 
 export const helmetMiddleware = helmet({
     contentSecurityPolicy: {
@@ -23,14 +23,7 @@ export const helmetMiddleware = helmet({
 export const compressionMiddleware = compression();
 
 export const corsMiddleware = cors({
-    origin: (origin, cb) => {
-        const isAllowed = !origin || origins.some(o =>
-            o instanceof RegExp ? o.test(origin) : o === origin
-        );
-        return isAllowed
-            ? cb(null, true)
-            : cb(new Error('Non autorisé par CORS'));
-    },
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true
 });
