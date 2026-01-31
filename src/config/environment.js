@@ -48,7 +48,7 @@ export const ENV = {
         windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 900000,
         max: Number(process.env.RATE_LIMIT_MAX) || 100,
         authWindowMs: Number(process.env.RATE_LIMIT_AUTH_WINDOW_MS) || 900000,
-        authMax: Number(process.env.RATE_LIMIT_AUTH_MAX) || 5,
+        authMax: Number(process.env.RATE_LIMIT_AUTH_MAX) || 100,
         reviewWindowMs: Number(process.env.RATE_LIMIT_REVIEWS) || 3600000,
         reviewMax: Number(process.env.RATE_LIMIT_REVIEWS_MAX) || 2
     },
