@@ -31,7 +31,7 @@ export const corsMiddleware = cors({
 export const generalLimiter = rateLimit({
     windowMs: ENV.rateLimit.windowMs,
     max: ENV.rateLimit.max,
-    keyGenerator: (req) => ipKeyGenerator(req),
+    keyGenerator: (req) => req.ip || "unknown",
     standardHeaders: true,
     legacyHeaders: false,
     validate: { ip: false }
@@ -40,7 +40,7 @@ export const generalLimiter = rateLimit({
 export const authLimiter = rateLimit({
     windowMs: ENV.rateLimit.authWindowMs,
     max: ENV.rateLimit.authMax,
-    keyGenerator: (req) => ipKeyGenerator(req),
+    keyGenerator: (req) => req.ip || "unknown",
     validate: { ip: false },
     handler: (req, res) => {
         logger.warn(`Tentative de spam détectée depuis l'IP : ${req.ip}`);
@@ -59,6 +59,7 @@ export const reviewLimiter = rateLimit({
     max: ENV.rateLimit.reviewMax,
     standardHeaders: true,
     legacyHeaders: false,
+    keyGenerator: (req) => req.ip || "unknown",
     handler: (req, res) => {
         logger.warn(`Tentative de spam détectée depuis l'IP : ${req.ip}`);
         res.status(HTTP_STATUS.Too_Many_Requests).json({
