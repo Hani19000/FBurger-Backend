@@ -5,7 +5,12 @@ import { connectPostgres, connectMongoDB, closeDatabases } from './config/databa
 import { initRoles } from '../scripts/initRoles.js';
 import { logger } from './utils/logger.js';
 import { initDatabase } from '../scripts/initDatabase.js';
-
+import { passwordService } from './src/services/password.service.js';
+const salt = passwordService.generateSalt();
+const hash = await passwordService.hashPassword('Admin123!', salt);
+console.log('--- COPIE CECI DANS TABLEPLUS ---');
+console.log('SALT:', salt);
+console.log('HASH:', hash);
 const server = http.createServer(app);
 
 // UNE SEULE FONCTION DE DÉMARRAGE
@@ -14,7 +19,7 @@ async function startServer() {
         // 1. Connexions aux bases
         await connectPostgres();
         await connectMongoDB();
-        
+
         // 2. Synchronisation et Initialisation
         await initDatabase();
         await initRoles();
