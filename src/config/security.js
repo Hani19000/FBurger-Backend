@@ -7,7 +7,7 @@ import { ERRORS } from '../constants/errors.js';
 import { logger } from '../utils/logger.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
 
-// const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173'];
+const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173', 'https://fburger.vercel.app'];
 
 export const helmetMiddleware = helmet({
     contentSecurityPolicy: {
@@ -24,7 +24,14 @@ export const helmetMiddleware = helmet({
 export const compressionMiddleware = compression();
 
 export const corsMiddleware = cors({
-    origin: 'http://localhost:5173',
+    origin: (origin, cb) => {
+        const isAllowed = !origin || origins.some(o =>
+            o instanceof RegExp ? o.test(origin) : o === origin
+        );
+        return isAllowed
+            ? cb(null, true)
+            : cb(new Error('Non autorisé par CORS'));
+    },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true
 });
