@@ -12,7 +12,6 @@ export const ReviewRepository = {
     findAll: async ({ page = 1, limit = 10 }) => {
         const skip = (page - 1) * limit;
         return await Review.find()
-            .populate('userId')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(parseInt(limit));
@@ -21,7 +20,6 @@ export const ReviewRepository = {
     findByUserId: async (userId, { page = 1, limit = 10 }) => {
         const skip = (page - 1) * limit;
         return await Review.find({ userId })
-            .populate('userId')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(parseInt(limit));

@@ -1,6 +1,7 @@
 import { ReviewRepository } from '../repositories/mongodb/review.repository.js';
 import { AppError } from '../utils/appError.js';
-import {HTTP_STATUS} from '../constants/httpStatus.js';
+import { HTTP_STATUS } from '../constants/httpStatus.js';
+import { User } from '../models/postgres/index.js';
 
 export const reviewService = {
     createReview: async ({ rating, content, userId }) => {
@@ -11,8 +12,27 @@ export const reviewService = {
     },
 
     getAllReviews: async (options) => {
-        return await ReviewRepository.findAll(options);
+        // 1- récupération des avis bruts depuis Mongo
+        const reviews = await ReviewRepository.findAll(options);
+
+        // 2- on complete les avis avec les donnéesde postgres
+        return await Promise.all(reviews.map(async (review) => {
+            const reviewObj = review.toObject ? review.toObject() : review;
+
+            // 3- récupération de l'user dans postgres via l'UUID stocké dans Mongo
+            const user = await User.findByPk(reviewObj.userId, {
+                attributes: ['username', 'id']
+            });
+            return {
+                ...reviewObj,
+                userId: {
+                    id: reviewObj.userId,
+                    username: user ? user.username : "User"
+                }
+            };
+        }));
     },
+
 
     updateReview: async (reviewId, data) => {
         const review = await ReviewRepository.update(reviewId, data);
