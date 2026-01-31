@@ -111,25 +111,29 @@ VALUES
 ON CONFLICT DO NOTHING; -- ✅ Évite les erreurs si les produits sont déjà là
 
 
--- CRÉATION UTILISATEUR ADMIN 
 DO $$
 DECLARE
-  admin_role_id INTEGER;
+    admin_role_id INTEGER;
 BEGIN
-  -- Récupérer l'ID du rôle ADMIN
-  SELECT id INTO admin_role_id FROM roles WHERE name = 'ADMIN';
 
-  -- Insérer admin si n'existe pas
-  INSERT INTO users (userName, email, passwordHash, salt, role_id)
-  VALUES (
-    'Admin',
-    'admin@fastfood.com',
-    -- Hash bcrypt de 'Admin123!' avec salt ci-dessous
-    '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5lW7fKJ5qG.Hy',
-    '$2b$12$LQv3c1yqBWVHxkd0LHAkCO',
-    admin_role_id
-  )
-  ON CONFLICT (email) DO NOTHING;
+    SELECT id INTO admin_role_id FROM "Roles" WHERE name = 'ADMIN';
+
+    IF admin_role_id IS NULL THEN
+        RAISE EXCEPTION 'Le rôle ADMIN n''existe pas en base de données. Vérifie la table Roles.';
+    END IF;
+    INSERT INTO "Users" ("username", "email", "password", "salt", "roleId", "createdAt", "updatedAt")
+    VALUES (
+        'Admin',
+        'admin@fastfood.com',
+        '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5lW7fKJ5qG.Hy', 
+        '$2b$12$LQv3c1yqBWVHxkd0LHAkCO',
+        admin_role_id,
+        NOW(),
+        NOW()
+    )
+    ON CONFLICT (email) DO NOTHING;
+
+    RAISE NOTICE 'Opération terminée avec succès.';
 END $$;
 
 

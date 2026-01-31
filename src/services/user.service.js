@@ -7,7 +7,7 @@ export const userService = {
     getUserById: async (userId) => {
         const user = await UserRepository.findById(userId);
         if (!user) throw new AppError('User not found', HTTP_STATUS.NOT_FOUND);
-        
+
         const { password, salt, ...safeUser } = user.toJSON();
         return safeUser;
     },
@@ -28,11 +28,11 @@ export const userService = {
     updateUserRole: async (userId, roleName) => {
         const role = await RoleRepository.findByName(roleName);
         if (!role) throw new AppError('Role not found', HTTP_STATUS.NOT_FOUND);
-        
+
         const user = await UserRepository.updateRole(userId, role.id);
         if (!user) throw new AppError('User not found', HTTP_STATUS.NOT_FOUND);
-        
-        const { password, salt, ...safeUser } = user.toJSON();
+
+        const { passwordHash, salt, ...safeUser } = user.toJSON();
         return safeUser;
     },
 };

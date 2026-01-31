@@ -54,7 +54,7 @@ export const authService = {
 
         if (!user) throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
 
-        const isValid = await passwordService.comparePassword(password, user.password, user.salt);
+        const isValid = await passwordService.comparePassword(password, user.passwordHash, user.salt);
         if (!isValid) throw new AppError('Identifiants invalides', HTTP_STATUS.UNAUTHORIZED);
 
         return await createAuthSession(user);
