@@ -8,7 +8,7 @@ import { authenticateToken } from '../middlewares/auth.middleware.js';
 const router = Router();
 
 router.post('/register', authLimiter, registerValidation, handleValidationErrors, register);
-router.post('/login', authLimiter, loginValidation, handleValidationErrors, login);
+router.post('/login', loginValidation, handleValidationErrors, login);
 router.post('/logout', logout);
 router.post('/refresh', refreshToken);
 router.get('/me', authenticateToken, getMe);
