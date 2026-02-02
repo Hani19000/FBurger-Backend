@@ -1,5 +1,4 @@
 import { User } from '../../models/postgres/user.model.js';
-import { ROLES } from '../../constants/roles.js';
 
 export const UserRepository = {
     findByEmail: async (email) => {
@@ -15,8 +14,6 @@ export const UserRepository = {
     },
 
     create: async (data) => {
-        console.log("Repo: Tentative de création pour", data.username || data.userName);
-
         return await User.create({
             username: data.username || data.userName,
             email: data.email,

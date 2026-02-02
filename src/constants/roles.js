@@ -1,7 +1,7 @@
 export const ROLES = {
-    ADMIN: 'admin',
-    USER: 'user',
-    VISITOR: 'visitor'
+    ADMIN: 'ADMIN',
+    USER: 'USER',
+    VISITOR: 'VISITOR'
 };
 
 export const PERMISSIONS = {
