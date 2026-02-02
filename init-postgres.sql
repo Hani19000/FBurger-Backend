@@ -89,7 +89,11 @@ CREATE TRIGGER update_products_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 
 
-
+CREATE TABLE IF NOT EXISTS roles (
+  id SERIAL PRIMARY KEY,
+  -- Ajout du CHECK pour empêcher l'insertion d'espaces 
+  name VARCHAR(50) UNIQUE NOT NULL CHECK (name = TRIM(name))
+);
 -- INSERTION DES RÔLES PAR DÉFAUT
 INSERT INTO roles (name) VALUES 
   ('VISITEUR'),
