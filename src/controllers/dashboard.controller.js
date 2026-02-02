@@ -1,6 +1,6 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendSuccess } from '../utils/response.js';
-import { AdminService } from '../services/admin.service.js'; // Le pivot central
+import { AdminService } from '../services/admin.service.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
 
 export const getStats = asyncHandler(async (_req, res) => {
