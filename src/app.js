@@ -6,8 +6,13 @@ import { errorHandler, notFoundHandler } from './middlewares/errorHandler.middle
 import router from './routes/index.js';
 import * as Sentry from '@sentry/node';
 import { getHealth } from './controllers/health.controller.js';
-
+import { fileURLToPath } from 'url';
+import path from 'path';
 const app = express();
+
+// Logique pour recréer __dirname en ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration Proxy pour Docker/Nginx
 app.set('trust proxy', 1);
@@ -24,7 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use('/images', express.static('public/images', {
+app.use('/images', express.static(path.join(__dirname, 'public/images'), {
     setHeaders: (res) => {
         res.set('Cross-Origin-Resource-Policy', 'cross-origin');
     }
