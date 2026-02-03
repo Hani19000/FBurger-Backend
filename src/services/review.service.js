@@ -13,50 +13,39 @@ export const reviewService = {
 
     // src/services/review.service.js
 
-    getAllReviews: async (options) => {
-        // 1. Récupération Mongo
-        const reviews = await ReviewRepository.findAll(options);
-        if (!reviews || reviews.length === 0) return [];
+    getAllReviews: async (options = {}) => {
+        try {
+            const reviews = await ReviewRepository.findAll(options);
+            if (!Array.isArray(reviews) || reviews.length === 0) return [];
 
-        // 2. Extraction sécurisée : On ne garde que les IDs numériques
-        // On convertit en Number et on vérifie si c'est un entier positif
-        const userIds = [...new Set(reviews.map(r => r.userId))]
-            .map(id => parseInt(id, 10))
-            .filter(id => !isNaN(id) && id > 0);
+            const userIds = [...new Set(reviews.map(r => r.userId))]
+                .map(id => parseInt(id, 10))
+                .filter(id => !isNaN(id) && id > 0);
 
-        let userMap = {};
-
-        // 3. Récupération groupée Postgres
-        if (userIds.length > 0) {
-            try {
+            let userMap = {};
+            if (userIds.length > 0) {
                 const users = await User.findAll({
                     where: { id: userIds },
-                    attributes: ['id', 'username']
+                    attributes: ['id', 'username'],
+                    raw: true
                 });
-
-                userMap = users.reduce((acc, user) => {
-                    acc[user.id] = user.username;
-                    return acc;
-                }, {});
-            } catch (dbError) {
-                // On logue l'erreur côté serveur pour le debug, mais on ne crash pas l'API
-                console.error("ERREUR CRITIQUE POSTGRES:", dbError.message);
+                users.forEach(u => userMap[u.id] = u.username);
             }
+
+            return reviews.map(review => {
+                const r = review.toObject ? review.toObject() : review;
+                return {
+                    ...r,
+                    userId: {
+                        id: r.userId,
+                        username: userMap[parseInt(r.userId)] || "Utilisateur supprimé"
+                    }
+                };
+            });
+        } catch (error) {
+            console.error("Erreur Service Review:", error);
+            return [];
         }
-
-        // 4. Mapping final avec protection contre les propriétés indéfinies
-        return reviews.map(review => {
-            const reviewObj = review.toObject ? review.toObject() : review;
-            const userId = parseInt(reviewObj.userId, 10);
-
-            return {
-                ...reviewObj,
-                userId: {
-                    id: reviewObj.userId,
-                    username: userMap[userId] || "Utilisateur anonyme"
-                }
-            };
-        });
     },
 
 

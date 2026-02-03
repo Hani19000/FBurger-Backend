@@ -9,12 +9,15 @@ export const ReviewRepository = {
         return await Review.findById(id);
     },
 
-    findAll: async ({ page = 1, limit = 10 }) => {
-        const skip = (page - 1) * limit;
+    findAll: async ({ page = 1, limit = 10 } = {}) => {
+        const sanitizedLimit = parseInt(limit) || 10;
+        const sanitizedPage = parseInt(page) || 1;
+        const skip = (sanitizedPage - 1) * sanitizedLimit;
+
         return await Review.find()
             .sort({ createdAt: -1 })
             .skip(skip)
-            .limit(parseInt(limit));
+            .limit(sanitizedLimit);
     },
 
     findByUserId: async (userId, { page = 1, limit = 10 }) => {
