@@ -3,7 +3,6 @@ import { getAllProducts, getProductById, createProduct, updateProduct, deletePro
 import { authenticateToken, requireAdmin } from '../middlewares/auth.middleware.js';
 import { createProductValidation, updateProductValidation } from '../validators/product.validator.js';
 import { handleValidationErrors } from '../middlewares/validator.middleware.js';
-import { updateProductValidation } from '../validators/product.validator.js';
 import { uploadSingleImage } from '../middlewares/multer.middelware.js';
 
 const router = Router();
