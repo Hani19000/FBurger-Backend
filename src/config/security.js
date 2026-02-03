@@ -7,14 +7,7 @@ import { ERRORS } from '../constants/errors.js';
 import { logger } from '../utils/logger.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
 
-const origins = process.env.CORS_ORIGINS?.split(',') || [];
-const allowedOrigins = [
-    ...origins.map(o => o.trim()),
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'https://fburger.vercel.app'
-];
+const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173', 'https://fburger.vercel.app', 'http://localhost:5174'];
 
 export const helmetMiddleware = helmet({
     contentSecurityPolicy: {
@@ -32,23 +25,15 @@ export const compressionMiddleware = compression();
 
 export const corsMiddleware = cors({
     origin: (origin, cb) => {
-        // Autorise les requêtes sans origine (comme les apps mobiles natives ou Postman)
-        if (!origin) return cb(null, true);
-
-        // Vérification stricte ou par Regex pour Vercel (si besoin)
-        const isAllowed = allowedOrigins.includes(origin) ||
-            allowedOrigins.some(o => origin.startsWith(o));
-
-        if (isAllowed) {
-            cb(null, true);
-        } else {
-            logger.error(`Blocage CORS pour l'origine : ${origin}`);
-            cb(new Error('Non autorisé par CORS'));
-        }
+        const isAllowed = !origin || origins.some(o =>
+            o instanceof RegExp ? o.test(origin) : o === origin
+        );
+        return isAllowed
+            ? cb(null, true)
+            : cb(new Error('Non autorisé par CORS'));
     },
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // OPTIONS est obligatoire pour le mobile
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true
 });
 
 // Cette fonction garantit que l'on cible l'IP exact du user (car render utilise plusieurs ip)

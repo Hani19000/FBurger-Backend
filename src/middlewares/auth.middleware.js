@@ -11,10 +11,9 @@ export const authenticateToken = asyncHandler(async (req, _res, next) => {
             : null);
 
     if (!token) {
-        req.user = null;
-        return next();
+        // On arrête tout de suite : pas de token = pas d'accès aux routes protégées
+        return next(new AppError('Authentication required', HTTP_STATUS.UNAUTHORIZED));
     }
-
     // 2. Vérification
     const payload = tokenService.verifyAccessToken(token);
     if (!payload) {
