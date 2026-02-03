@@ -33,11 +33,15 @@ export const reviewService = {
 
         return reviews.map(review => {
             const reviewObj = review.toObject ? review.toObject() : review;
+            // On force aussi la clé de recherche en string
+            const userIdStr = reviewObj.userId.toString();
+            console.log('UserMap Keys:', Object.keys(userMap));
+            console.log('First Review UserId:', reviews[0]?.userId);
             return {
                 ...reviewObj,
                 userId: {
                     id: reviewObj.userId,
-                    username: userMap[reviewObj.userId] || "Utilisateur anonyme"
+                    username: userMap[userIdStr] || "Utilisateur anonyme"
                 }
             };
         });
