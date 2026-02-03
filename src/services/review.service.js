@@ -16,50 +16,64 @@ export const reviewService = {
 
     getAllReviews: async (options = {}) => {
         try {
+            // 1. Récupération des reviews depuis MongoDB
             const reviews = await ReviewRepository.findAll(options);
-            if (!Array.isArray(reviews) || reviews.length === 0) return [];
 
-            // 1. EXTRACTION SÉCURISÉE : On garde les IDs en tant que String (UUID)
-            // On filtre uniquement pour s'assurer qu'on n'envoie pas de valeurs vides
-            const userIds = [...new Set(reviews.map(r => r.userId))].filter(id => id != null && id !== '');
+            if (!Array.isArray(reviews) || reviews.length === 0) {
+                return [];
+            }
 
+            // 2. Extraction des IDs utilisateurs (UUID format String)
+            const userIds = [...new Set(
+                reviews
+                    .map(r => r.userId)
+                    .filter(id => id != null && id !== '')
+            )];
+
+            // 3. Récupération des informations utilisateurs depuis PostgreSQL
             let userMap = {};
 
             if (userIds.length > 0) {
                 try {
-                    // 2. RECHERCHE POSTGRES : userIds contient maintenant des UUID (Strings)
                     const users = await User.findAll({
                         where: { id: userIds },
                         attributes: ['id', 'username'],
                         raw: true
                     });
 
-                    users.forEach(u => {
-                        userMap[u.id] = u.username;
+                    // Construction de la Map id -> username
+                    users.forEach(user => {
+                        userMap[user.id] = user.username;
                     });
                 } catch (dbError) {
-                    // Si Postgres râle encore, on log l'erreur mais on affiche les avis
-                    console.error("ERREUR TYPE SQL (UUID vs Integer):", dbError.message);
+                    console.error("Erreur lors de la récupération des utilisateurs:", {
+                        message: dbError.message,
+                        userIds: userIds.slice(0, 3) // Log des 3 premiers IDs pour debug
+                    });
+                    // On continue même si la récupération des users échoue
                 }
             }
 
-            // 3. MAPPING FINAL
+            // 4. Mapping final : enrichissement des reviews avec les infos utilisateurs
             return reviews.map(review => {
-                const r = review.toObject ? review.toObject() : review;
-                // On utilise l'ID brut pour chercher dans la Map (UUID String)
-                const currentUserId = r.userId;
+                const reviewObject = review.toObject ? review.toObject() : review;
+                const userId = reviewObject.userId;
 
                 return {
-                    ...r,
+                    ...reviewObject,
                     userId: {
-                        id: currentUserId,
-                        username: userMap[currentUserId] || "Utilisateur anonyme"
+                        id: userId,
+                        username: userMap[userId] || "Utilisateur anonyme"
                     }
                 };
             });
+
         } catch (error) {
-            console.error("CRASH SERVICE REVIEWS:", error);
-            return [];
+            console.error("Erreur dans reviewService.getAllReviews:", error);
+            throw new AppError(
+                'Impossible de récupérer les avis',
+                HTTP_STATUS.INTERNAL_SERVER_ERROR
+            );
         }
     },
 

@@ -16,17 +16,5 @@ export const AdminService = {
             throw error; // Renvoie l'erreur au asyncHandler
         }
     },
-
-    getReviews: async () => {
-        try {
-            const response = await api.get('/reviews');
-            // response.data contient { success: true, data: [...] }
-            // On retourne donc response.data.data
-            return response.data.data || [];
-        } catch (error) {
-            console.error("Détails erreur API:", error.response?.data);
-            throw error;
-        }
-    },
 };
 
