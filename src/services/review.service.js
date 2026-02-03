@@ -11,6 +11,7 @@ export const reviewService = {
         return await ReviewRepository.create({ rating, content, userId });
     },
 
+
     // src/services/review.service.js
 
     getAllReviews: async (options = {}) => {
@@ -18,32 +19,46 @@ export const reviewService = {
             const reviews = await ReviewRepository.findAll(options);
             if (!Array.isArray(reviews) || reviews.length === 0) return [];
 
-            const userIds = [...new Set(reviews.map(r => r.userId))]
-                .map(id => parseInt(id, 10))
-                .filter(id => !isNaN(id) && id > 0);
+            // 1. EXTRACTION SÉCURISÉE : On garde les IDs en tant que String (UUID)
+            // On filtre uniquement pour s'assurer qu'on n'envoie pas de valeurs vides
+            const userIds = [...new Set(reviews.map(r => r.userId))].filter(id => id != null && id !== '');
 
             let userMap = {};
+
             if (userIds.length > 0) {
-                const users = await User.findAll({
-                    where: { id: userIds },
-                    attributes: ['id', 'username'],
-                    raw: true
-                });
-                users.forEach(u => userMap[u.id] = u.username);
+                try {
+                    // 2. RECHERCHE POSTGRES : userIds contient maintenant des UUID (Strings)
+                    const users = await User.findAll({
+                        where: { id: userIds },
+                        attributes: ['id', 'username'],
+                        raw: true
+                    });
+
+                    users.forEach(u => {
+                        userMap[u.id] = u.username;
+                    });
+                } catch (dbError) {
+                    // Si Postgres râle encore, on log l'erreur mais on affiche les avis
+                    console.error("ERREUR TYPE SQL (UUID vs Integer):", dbError.message);
+                }
             }
 
+            // 3. MAPPING FINAL
             return reviews.map(review => {
                 const r = review.toObject ? review.toObject() : review;
+                // On utilise l'ID brut pour chercher dans la Map (UUID String)
+                const currentUserId = r.userId;
+
                 return {
                     ...r,
                     userId: {
-                        id: r.userId,
-                        username: userMap[parseInt(r.userId)] || "Utilisateur supprimé"
+                        id: currentUserId,
+                        username: userMap[currentUserId] || "Utilisateur anonyme"
                     }
                 };
             });
         } catch (error) {
-            console.error("Erreur Service Review:", error);
+            console.error("CRASH SERVICE REVIEWS:", error);
             return [];
         }
     },
