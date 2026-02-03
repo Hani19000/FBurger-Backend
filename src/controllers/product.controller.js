@@ -13,17 +13,27 @@ export const getProductById = asyncHandler(async (req, res) => {
     sendSuccess(res, HTTP_STATUS.OK, product);
 });
 
-export const createProduct = asyncHandler(async (req, res) => {
-    const product = await productService.createProduct(req.body);
-    sendSuccess(res, HTTP_STATUS.CREATED, product);
-});
-
 export const updateProduct = asyncHandler(async (req, res) => {
+    const updateData = { ...req.body };
+    // Si un nouveau fichier a été uploadé via le middleware multer
+    if (req.file) {
+        // On construit le chemin relatif pour la BDD (ex: /images/123-img.jpg)
+        updateData.image_url = `/images/${req.file.filename}`;
+    }
     const product = await productService.updateProduct(
         req.params.id,
-        req.body
+        updateData
     );
     sendSuccess(res, HTTP_STATUS.OK, product);
+});
+
+export const createProduct = asyncHandler(async (req, res) => {
+    const productData = { ...req.body };
+    if (req.file) {
+        productData.image_url = `/images/${req.file.filename}`;
+    }
+    const product = await productService.createProduct(productData);
+    sendSuccess(res, HTTP_STATUS.CREATED, product);
 });
 
 export const deleteProduct = asyncHandler(async (req, res) => {
