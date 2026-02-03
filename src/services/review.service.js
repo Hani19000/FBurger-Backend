@@ -11,18 +11,22 @@ export const reviewService = {
         return await ReviewRepository.create({ rating, content, userId });
     },
 
+    // src/services/review.service.js
+
     getAllReviews: async (options) => {
-        // 1- récupération des avis bruts depuis Mongo
+        // 1. Récupération Mongo
         const reviews = await ReviewRepository.findAll(options);
         if (!reviews || reviews.length === 0) return [];
 
-        // 2. Extraction et filtrage des IDs (on retire les null/undefined)
+        // 2. Extraction sécurisée : On ne garde que les IDs numériques
+        // On convertit en Number et on vérifie si c'est un entier positif
         const userIds = [...new Set(reviews.map(r => r.userId))]
-            .map(id => Number(id))
+            .map(id => parseInt(id, 10))
             .filter(id => !isNaN(id) && id > 0);
 
         let userMap = {};
 
+        // 3. Récupération groupée Postgres
         if (userIds.length > 0) {
             try {
                 const users = await User.findAll({
@@ -34,21 +38,22 @@ export const reviewService = {
                     acc[user.id] = user.username;
                     return acc;
                 }, {});
-            } catch (error) {
-                console.error("Erreur Postgres lors du mapping des avis:", error);
-                // On ne bloque pas tout, on continue pour afficher au moins les avis
+            } catch (dbError) {
+                // On logue l'erreur côté serveur pour le debug, mais on ne crash pas l'API
+                console.error("ERREUR CRITIQUE POSTGRES:", dbError.message);
             }
         }
 
-        // 4. Création d'une "Map" pour un accès instantané
+        // 4. Mapping final avec protection contre les propriétés indéfinies
         return reviews.map(review => {
             const reviewObj = review.toObject ? review.toObject() : review;
+            const userId = parseInt(reviewObj.userId, 10);
 
             return {
                 ...reviewObj,
                 userId: {
                     id: reviewObj.userId,
-                    username: userMap[reviewObj.userId] || "Anonyme (ID invalide)"
+                    username: userMap[userId] || "Utilisateur anonyme"
                 }
             };
         });
