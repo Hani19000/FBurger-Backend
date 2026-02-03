@@ -1,12 +1,14 @@
 import { reviewService } from '../services/review.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendSuccess } from '../utils/response.js';
-import {HTTP_STATUS} from '../constants/httpStatus.js';
+import { HTTP_STATUS } from '../constants/httpStatus.js';
 
 export const createReview = asyncHandler(async (req, res) => {
+    console.log('Tentative de création d avis par user:', req.user.id);
+    console.log('Données reçues:', req.body);
     const review = await reviewService.createReview({
         ...req.body,
-        userId: req.user.id 
+        userId: req.user.id
     });
     sendSuccess(res, HTTP_STATUS.CREATED, review);
 });
@@ -18,7 +20,7 @@ export const getAllReviews = asyncHandler(async (req, res) => {
 });
 
 export const updateReview = asyncHandler(async (req, res) => {
-    const review = await reviewService.updateReview( req.params.id, req.body);
+    const review = await reviewService.updateReview(req.params.id, req.body);
     sendSuccess(res, HTTP_STATUS.OK, review);
 });
 

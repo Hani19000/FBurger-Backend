@@ -17,32 +17,33 @@ export const reviewService = {
         if (!reviews || reviews.length === 0) return [];
 
         // 2. Extraction des IDs utilisateurs uniques
-        const userIds = [...new Set(reviews.map(r => r.userId))];
-
         // 3. Récupération groupée des utilisateurs dans Postgres
-        const users = await User.unscoped().findAll({ // On utilise .unscoped() pour ignorer le defaultScope
+        // 2. Extraction et Nettoyage des IDs
+        // On s'assure que ce sont des strings propres sans espaces
+        const userIds = [...new Set(reviews.map(r => r.userId.toString().trim()))];
+
+        // 3. Récupération groupée
+        const users = await User.unscoped().findAll({
             where: {
-                id: userIds
+                id: userIds // Sequelize devrait caster, mais on vérifie la correspondance
             },
             attributes: ['id', 'username'],
-            raw: true // On récupère des données brutes pour plus de rapidité
-        })
+            raw: true
+        });
 
-        console.log('Nombre d utilisateurs trouvés dans Postgres:', users.length);
-        console.log('IDs recherchés:', userIds);
-
-        // 4. Création d'une "Map" pour un accès instantané
+        // 4. Création de la Map (Crucial : on force la clé en minuscule pour la comparaison)
         const userMap = users.reduce((acc, user) => {
-            acc[user.id] = user.username;
+            // On stocke la clé en minuscule pour éviter les problèmes de casse UUID
+            acc[user.id.toLowerCase()] = user.username;
             return acc;
         }, {});
 
+        // 5. Assemblage
         return reviews.map(review => {
             const reviewObj = review.toObject ? review.toObject() : review;
-            // On force aussi la clé de recherche en string
-            const userIdStr = reviewObj.userId.toString();
-            console.log('UserMap Keys:', Object.keys(userMap));
-            console.log('First Review UserId:', reviews[0]?.userId);
+            // On compare en minuscule
+            const userIdStr = reviewObj.userId.toString().toLowerCase().trim();
+
             return {
                 ...reviewObj,
                 userId: {
