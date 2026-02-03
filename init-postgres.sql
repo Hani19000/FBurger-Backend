@@ -52,8 +52,6 @@ CREATE TABLE IF NOT EXISTS products (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-
-
 -- TABLE: SESSIONS
 -- Description: Gestion des sessions utilisateurs (refresh tokens)
 

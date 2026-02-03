@@ -16,7 +16,7 @@ const COOKIE_OPTIONS = {
 
 const ACCESS_TOKEN_OPTIONS = {
     ...COOKIE_OPTIONS,
-    maxAge: 15 * 60 * 1000 // 15 minutes
+    maxAge: 30 * 60 * 1000
 };
 
 export const register = asyncHandler(async (req, res) => {
