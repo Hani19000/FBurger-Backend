@@ -3,7 +3,7 @@ import { getAllProducts, getProductById, createProduct, updateProduct, deletePro
 import { authenticateToken, requireAdmin } from '../middlewares/auth.middleware.js';
 import { createProductValidation, updateProductValidation } from '../validators/product.validator.js';
 import { handleValidationErrors } from '../middlewares/validator.middleware.js';
-import { uploadSingleImage } from '../middlewares/multer.middelware.js';
+import { uploadCloud } from '../config/cloudinary.js';
 
 const router = Router();
 
@@ -15,10 +15,10 @@ router.get('/:id', getProductById);
 router.use(authenticateToken, requireAdmin);
 
 // Route de création (une seule fois avec les validateurs)
-router.post('/', uploadSingleImage, createProductValidation, handleValidationErrors, createProduct);
+router.post('/', uploadCloud.single('image'), createProductValidation, handleValidationErrors, createProduct);
 
 
-router.put('/:id', uploadSingleImage, updateProductValidation, handleValidationErrors, updateProduct);
+router.put('/:id', uploadCloud.single('image'), updateProductValidation, handleValidationErrors, updateProduct);
 
 router.delete('/:id', deleteProduct);
 

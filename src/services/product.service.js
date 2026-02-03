@@ -1,8 +1,7 @@
 import { ProductRepository } from '../repositories/postgres/product.repository.js';
 import { AppError } from '../utils/appError.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
-import fs from 'fs/promises';
-import path from 'path';
+import { cloudinary } from '../config/cloudinary.js';
 
 export const productService = {
     getAllProducts: async (options) => {
@@ -23,23 +22,30 @@ export const productService = {
     },
 
     updateProduct: async (id, data) => {
-        // 1. Récupérer l'ancien produit pour connaître l'ancienne image
-        const oldProduct = await ProductRepository.findById(id);
-        if (!oldProduct) throw new AppError('Product not found', HTTP_STATUS.NOT_FOUND);
-
-        // 2. Mettre à jour en BDD
-        const updatedProduct = await ProductRepository.update(id, data);
-
-        // 3. Optionnel : Supprimer l'ancien fichier si une nouvelle image est fournie
-        if (data.image_url && oldProduct.image_url && oldProduct.image_url !== data.image_url) {
-            const oldPath = path.join(process.cwd(), 'public', oldProduct.image_url);
-            fs.unlink(oldPath).catch(err => console.error("Erreur suppression ancien fichier:", err));
-        }
-
-        return updatedProduct;
+        const product = await ProductRepository.update(id, data);
+        if (!product) throw new AppError('Product not found', HTTP_STATUS.NOT_FOUND);
+        return product;
     },
 
     deleteProduct: async (id) => {
+        const product = await ProductRepository.findById(id);
+        if (!product) throw new AppError('Product not found', HTTP_STATUS.NOT_FOUND);
+
+        if (product.image_url && product.image_url.includes('cloudinary')) {
+            try {
+                // ✅ On récupère le dossier et le nom du fichier sans l'extension
+                // URL type: .../fburger_products/v12345/image_name.jpg
+                const parts = product.image_url.split('/');
+                const fileNameWithExtension = parts.pop(); // image_name.jpg
+                const folderName = parts.pop(); // fburger_products
+                const publicId = `${folderName}/${fileNameWithExtension.split('.')[0]}`;
+
+                await cloudinary.uploader.destroy(publicId);
+            } catch (error) {
+                console.error("Erreur suppression Cloudinary:", error);
+            }
+        }
+
         await ProductRepository.deleteById(id);
     },
 };

@@ -18,16 +18,15 @@ export const ProductRepository = {
         return await Product.findByPk(id);
     },
 
-    create: async ({ name, category, image, price, description }) => {
+    create: async (data) => {
         return await Product.create({
-            name,
-            categorie: category,
-            image_url: image,
-            prix: price,
-            description,
+            name: data.name,
+            categorie: data.categorie || data.category,
+            image_url: data.image_url || data.image,
+            prix: data.prix || data.price,
+            description: data.description,
         });
     },
-
     update: async (id, data) => {
         const product = await Product.findByPk(id);
         if (!product) return null;
