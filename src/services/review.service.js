@@ -17,38 +17,27 @@ export const reviewService = {
         if (!reviews || reviews.length === 0) return [];
 
         // 2. Extraction des IDs utilisateurs uniques
-        // 3. Récupération groupée des utilisateurs dans Postgres
-        // 2. Extraction et Nettoyage des IDs
-        // On s'assure que ce sont des strings propres sans espaces
-        const userIds = [...new Set(reviews.map(r => r.userId.toString().trim()))];
+        const userIds = [...new Set(reviews.map(r => r.userId))];
 
-        // 3. Récupération groupée
-        const users = await User.unscoped().findAll({
-            where: {
-                id: userIds // Sequelize devrait caster, mais on vérifie la correspondance
-            },
-            attributes: ['id', 'username'],
-            raw: true
+        // 3. Récupération groupée des utilisateurs dans Postgres (1 seule requête)
+        const users = await User.findAll({
+            where: { id: userIds },
+            attributes: ['id', 'username']
         });
 
-        // 4. Création de la Map (Crucial : on force la clé en minuscule pour la comparaison)
+        // 4. Création d'une "Map" pour un accès instantané
         const userMap = users.reduce((acc, user) => {
-            // On stocke la clé en minuscule pour éviter les problèmes de casse UUID
-            acc[user.id.toLowerCase()] = user.username;
+            acc[user.id] = user.username;
             return acc;
         }, {});
 
-        // 5. Assemblage
         return reviews.map(review => {
             const reviewObj = review.toObject ? review.toObject() : review;
-            // On compare en minuscule
-            const userIdStr = reviewObj.userId.toString().toLowerCase().trim();
-
             return {
                 ...reviewObj,
                 userId: {
                     id: reviewObj.userId,
-                    username: userMap[userIdStr] || "Utilisateur anonyme"
+                    username: userMap[reviewObj.userId] || "Utilisateur anonyme"
                 }
             };
         });
