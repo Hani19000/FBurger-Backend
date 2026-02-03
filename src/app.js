@@ -31,6 +31,7 @@ app.use(cookieParser());
 
 app.use('/images', express.static(path.join(__dirname, 'public/images'), {
     setHeaders: (res) => {
+        // Indispensable pour que le frontend puisse lire l'image sur Render
         res.set('Cross-Origin-Resource-Policy', 'cross-origin');
     }
 }));
