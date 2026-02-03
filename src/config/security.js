@@ -25,15 +25,23 @@ export const compressionMiddleware = compression();
 
 export const corsMiddleware = cors({
     origin: (origin, cb) => {
-        const isAllowed = !origin || origins.some(o =>
-            o instanceof RegExp ? o.test(origin) : o === origin
-        );
-        return isAllowed
-            ? cb(null, true)
-            : cb(new Error('Non autorisé par CORS'));
+        // Autorise les requêtes sans origine (comme les apps mobiles natives ou Postman)
+        if (!origin) return cb(null, true);
+
+        // Vérification stricte ou par Regex pour Vercel (si besoin)
+        const isAllowed = allowedOrigins.includes(origin) ||
+            allowedOrigins.some(o => origin.startsWith(o));
+
+        if (isAllowed) {
+            cb(null, true);
+        } else {
+            logger.error(`Blocage CORS pour l'origine : ${origin}`);
+            cb(new Error('Non autorisé par CORS'));
+        }
     },
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    credentials: true
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // OPTIONS est obligatoire pour le mobile
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 });
 
 // Cette fonction garantit que l'on cible l'IP exact du user (car render utilise plusieurs ip)
