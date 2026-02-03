@@ -19,11 +19,17 @@ export const reviewService = {
         // 2. Extraction des IDs utilisateurs uniques
         const userIds = [...new Set(reviews.map(r => r.userId))];
 
-        // 3. Récupération groupée des utilisateurs dans Postgres (1 seule requête)
-        const users = await User.findAll({
-            where: { id: userIds },
-            attributes: ['id', 'username']
-        });
+        // 3. Récupération groupée des utilisateurs dans Postgres
+        const users = await User.unscoped().findAll({ // On utilise .unscoped() pour ignorer le defaultScope
+            where: {
+                id: userIds
+            },
+            attributes: ['id', 'username'],
+            raw: true // On récupère des données brutes pour plus de rapidité
+        })
+
+        console.log('Nombre d utilisateurs trouvés dans Postgres:', users.length);
+        console.log('IDs recherchés:', userIds);
 
         // 4. Création d'une "Map" pour un accès instantané
         const userMap = users.reduce((acc, user) => {
