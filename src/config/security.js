@@ -14,6 +14,7 @@ export const helmetMiddleware = helmet({
         directives: {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'"],
+            imgSrc: ["'self'", "data:", "blob:", "*"],
             objectSrc: ["'none'"],
             upgradeInsecureRequests: [],
         },
