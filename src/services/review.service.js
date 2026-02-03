@@ -14,23 +14,33 @@ export const reviewService = {
     getAllReviews: async (options) => {
         // 1- récupération des avis bruts depuis Mongo
         const reviews = await ReviewRepository.findAll(options);
+        if (!reviews || reviews.length === 0) return [];
 
-        // 2- on complete les avis avec les donnéesde postgres
-        return await Promise.all(reviews.map(async (review) => {
+        // 2. Extraction des IDs utilisateurs uniques
+        const userIds = [...new Set(reviews.map(r => r.userId))];
+
+        // 3. Récupération groupée des utilisateurs dans Postgres (1 seule requête)
+        const users = await User.findAll({
+            where: { id: userIds },
+            attributes: ['id', 'username']
+        });
+
+        // 4. Création d'une "Map" pour un accès instantané
+        const userMap = users.reduce((acc, user) => {
+            acc[user.id] = user.username;
+            return acc;
+        }, {});
+
+        return reviews.map(review => {
             const reviewObj = review.toObject ? review.toObject() : review;
-
-            // 3- récupération de l'user dans postgres via l'UUID stocké dans Mongo
-            const user = await User.findByPk(reviewObj.userId, {
-                attributes: ['username', 'id']
-            });
             return {
                 ...reviewObj,
                 userId: {
                     id: reviewObj.userId,
-                    username: user ? user.username : "User"
+                    username: userMap[reviewObj.userId] || "Utilisateur anonyme"
                 }
             };
-        }));
+        });
     },
 
 
