@@ -27,22 +27,28 @@ export const productService = {
         return product;
     },
 
+    /**
+     * Supprime un produit et son média distant associé
+     * @param {number|string} id - Identifiant du produit
+     * @throws {AppError} Si le produit n'existe pas
+     */
     deleteProduct: async (id) => {
         const product = await ProductRepository.findById(id);
-        if (!product) throw new AppError('Product not found', HTTP_STATUS.NOT_FOUND);
+        if (!product) {
+            throw new AppError('Produit introuvable', HTTP_STATUS.NOT_FOUND);
+        }
 
-        if (product.image_url && product.image_url.includes('cloudinary')) {
+        if (product.image_url?.includes('cloudinary')) {
             try {
-                // ✅ On récupère le dossier et le nom du fichier sans l'extension
-                // URL type: .../fburger_products/v12345/image_name.jpg
                 const parts = product.image_url.split('/');
-                const fileNameWithExtension = parts.pop(); // image_name.jpg
-                const folderName = parts.pop(); // fburger_products
-                const publicId = `${folderName}/${fileNameWithExtension.split('.')[0]}`;
+                const filename = parts.at(-1).split('.')[0];
+                const folder = parts.at(-2);
+                const publicId = `${folder}/${filename}`;
 
                 await cloudinary.uploader.destroy(publicId);
             } catch (error) {
-                console.error("Erreur suppression Cloudinary:", error);
+                // Échec silencieux pour garantir la suppression en base de données
+                // même en cas d'erreur réseau avec le stockage distant
             }
         }
 

@@ -27,6 +27,7 @@ export const ProductRepository = {
             description: data.description,
         });
     },
+
     update: async (id, data) => {
         const product = await Product.findByPk(id);
         if (!product) return null;

@@ -11,37 +11,45 @@ export const reviewService = {
         return await ReviewRepository.create({ rating, content, userId });
     },
 
+    /**
+ * Récupère tous les avis en enrichissant les données avec les noms d'utilisateurs (SQL)
+ * @param {Object} options - Filtres et options de pagination
+ * @returns {Promise<Array>} Liste des avis enrichis
+ */
     getAllReviews: async (options) => {
-        // 1- récupération des avis bruts depuis Mongo
+        // 1. Récupération des données brutes (MongoDB)
         const reviews = await ReviewRepository.findAll(options);
-        if (!reviews || reviews.length === 0) return [];
+        if (!reviews?.length) return [];
 
-        // 2. Extraction et filtrage des IDs (on retire les null/undefined)
+        // 2. Identification des utilisateurs uniques (SQL) pour éviter les requêtes inutiles
+        // On utilise Set pour l'unicité et filter(Boolean) pour la sécurité
         const userIds = [...new Set(reviews.map(r => r.userId))].filter(Boolean);
-
         let userMap = {};
 
         if (userIds.length > 0) {
-            // 3. Récupération groupée
+            // 3. Récupération groupée (Bulk Fetch) - Performance optimisée
             const users = await User.findAll({
                 where: { id: userIds },
                 attributes: ['id', 'username']
             });
 
-            // 4. Création d'une "Map" pour un accès instantané
-            userMap = users.reduce((acc, user) => {
-                acc[user.id] = user.username;
-                return acc;
-            }, {});
+            // 4. Indexation sous forme de Map { id: username } pour un accès O(1)
+            userMap = users.reduce((acc, user) => ({
+                ...acc,
+                [user.id]: user.username
+            }), {});
         }
 
+        // 5. Hydratation et formatage final
         return reviews.map(review => {
-            const reviewObj = review.toObject ? review.toObject() : review;
+            const reviewData = review.toObject ? review.toObject() : { ...review };
+
             return {
-                ...reviewObj,
-                userId: {
-                    id: reviewObj.userId,
-                    username: userMap[reviewObj.userId] || "Utilisateur anonyme"
+                ...reviewData,
+                // On transforme l'ID simple en objet enrichi pour le frontend
+                user: {
+                    id: reviewData.userId,
+                    username: userMap[reviewData.userId] || "Utilisateur supprimé"
                 }
             };
         });
