@@ -24,7 +24,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use('/images', express.static('public/images'));
+app.use('/images', express.static('public/images', {
+    setHeaders: (res) => {
+        res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    }
+}));
 
 // Routes
 app.get('/api/health', getHealth);
