@@ -11,70 +11,40 @@ export const reviewService = {
         return await ReviewRepository.create({ rating, content, userId });
     },
 
+    getAllReviews: async (options) => {
+        // 1- récupération des avis bruts depuis Mongo
+        const reviews = await ReviewRepository.findAll(options);
+        if (!reviews || reviews.length === 0) return [];
 
-    // src/services/review.service.js
+        // 2. Extraction et filtrage des IDs (on retire les null/undefined)
+        const userIds = [...new Set(reviews.map(r => r.userId))].filter(Boolean);
 
-    getAllReviews: async (options = {}) => {
-        try {
-            // 1. Récupération des reviews depuis MongoDB
-            const reviews = await ReviewRepository.findAll(options);
+        let userMap = {};
 
-            if (!Array.isArray(reviews) || reviews.length === 0) {
-                return [];
-            }
-
-            // 2. Extraction des IDs utilisateurs (UUID format String)
-            const userIds = [...new Set(
-                reviews
-                    .map(r => r.userId)
-                    .filter(id => id != null && id !== '')
-            )];
-
-            // 3. Récupération des informations utilisateurs depuis PostgreSQL
-            let userMap = {};
-
-            if (userIds.length > 0) {
-                try {
-                    const users = await User.findAll({
-                        where: { id: userIds },
-                        attributes: ['id', 'username'],
-                        raw: true
-                    });
-
-                    // Construction de la Map id -> username
-                    users.forEach(user => {
-                        userMap[user.id] = user.username;
-                    });
-                } catch (dbError) {
-                    console.error("Erreur lors de la récupération des utilisateurs:", {
-                        message: dbError.message,
-                        userIds: userIds.slice(0, 3) // Log des 3 premiers IDs pour debug
-                    });
-                    // On continue même si la récupération des users échoue
-                }
-            }
-
-            // 4. Mapping final : enrichissement des reviews avec les infos utilisateurs
-            return reviews.map(review => {
-                const reviewObject = review.toObject ? review.toObject() : review;
-                const userId = reviewObject.userId;
-
-                return {
-                    ...reviewObject,
-                    userId: {
-                        id: userId,
-                        username: userMap[userId] || "Utilisateur anonyme"
-                    }
-                };
+        if (userIds.length > 0) {
+            // 3. Récupération groupée
+            const users = await User.findAll({
+                where: { id: userIds },
+                attributes: ['id', 'username']
             });
 
-        } catch (error) {
-            console.error("Erreur dans reviewService.getAllReviews:", error);
-            throw new AppError(
-                'Impossible de récupérer les avis',
-                HTTP_STATUS.INTERNAL_SERVER_ERROR
-            );
+            // 4. Création d'une "Map" pour un accès instantané
+            userMap = users.reduce((acc, user) => {
+                acc[user.id] = user.username;
+                return acc;
+            }, {});
         }
+
+        return reviews.map(review => {
+            const reviewObj = review.toObject ? review.toObject() : review;
+            return {
+                ...reviewObj,
+                userId: {
+                    id: reviewObj.userId,
+                    username: userMap[reviewObj.userId] || "Utilisateur anonyme"
+                }
+            };
+        });
     },
 
 

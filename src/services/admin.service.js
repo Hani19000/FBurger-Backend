@@ -13,7 +13,7 @@ export const AdminService = {
 
             return { users, products, reviews };
         } catch (error) {
-            throw error; // Renvoie l'erreur au asyncHandler
+            throw error;
         }
     },
 };
