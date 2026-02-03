@@ -7,7 +7,14 @@ import { ERRORS } from '../constants/errors.js';
 import { logger } from '../utils/logger.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
 
-const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173', 'https://fburger.vercel.app', 'http://localhost:5174'];
+const origins = process.env.CORS_ORIGINS?.split(',') || [];
+const allowedOrigins = [
+    ...origins.map(o => o.trim()),
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://fburger.vercel.app'
+];
 
 export const helmetMiddleware = helmet({
     contentSecurityPolicy: {
