@@ -43,6 +43,15 @@ export const ReviewRepository = {
         return false;
     },
 
+    deleteManyByUserId: async (userId) => {
+        // Supprime tous les avis dont le userId correspond
+        return await Review.deleteMany({ userId: userId.toString() });
+    },
+
+    count: async () => {
+        return await Review.countDocuments();
+    },
+
     isOwner: async (reviewId, userId) => {
         const review = await Review.findById(reviewId);
         return review && review.userId.toString() === userId.toString();
