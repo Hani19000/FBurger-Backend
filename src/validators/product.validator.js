@@ -3,34 +3,36 @@ import { body } from 'express-validator';
 export const createProductValidation = [
     body('name')
         .trim()
-        .notEmpty().withMessage('Product name is required')
-        .isLength({ min: 3, max: 100 }).withMessage('Name must be between 3 and 100 characters'),
-    body('category')
+        .notEmpty().withMessage('Le nom est requis')
+        .isLength({ min: 3, max: 100 }).withMessage('Le nom doit faire entre 3 et 100 caractères'),
+    body('categorie')
         .trim()
-        .notEmpty().withMessage('Category is required'),
-    body('image')
-        .isURL().withMessage('Please provide a valid image URL'),
-    body('price')
-        .isFloat({ min: 0 }).withMessage('Price must be a positive number')
-        .custom(value => Number.isFinite(Number(value)))
-        .withMessage('Price must have up to 2 decimal places'),
+        .notEmpty().withMessage('La catégorie est requise'),
+    body('image_url')
+        .optional(),
+    body('prix')
+        .notEmpty().withMessage('Le prix est requis')
+        .isFloat({ min: 0 }).withMessage('Le prix doit être un nombre positif'),
     body('description')
+        .optional()
         .trim()
-        .isLength({ max: 1000 }).withMessage('Description cannot exceed 1000 characters')
+        .isLength({ max: 1000 }).withMessage('La description ne peut pas dépasser 1000 caractères')
 ];
 
 export const updateProductValidation = [
     body('name')
         .optional().trim()
-        .isLength({ min: 3, max: 100 }).withMessage('Name must be between 3 and 100 characters'),
+        .isLength({ min: 3, max: 100 }),
     body('categorie')
-        .optional().trim(),
-    body('image_url')
         .optional()
         .trim(),
+    body('image_url')
+        .optional().
+        trim(),
     body('prix')
         .optional()
-        .isFloat({ min: 0 }).withMessage('Price must be a positive number'),
+        .isFloat({ min: 0 }),
     body('description')
-        .optional().trim()
+        .optional()
+        .trim()
 ];
