@@ -4,8 +4,6 @@ import { sendSuccess } from '../utils/response.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
 
 export const createReview = asyncHandler(async (req, res) => {
-    console.log('Tentative de création d avis par user:', req.user.id);
-    console.log('Données reçues:', req.body);
     const review = await reviewService.createReview({
         ...req.body,
         userId: req.user.id
