@@ -17,34 +17,38 @@ export const reviewService = {
         if (!reviews || reviews.length === 0) return [];
 
         // 2. Extraction et filtrage des IDs (on retire les null/undefined)
-        const userIds = [...new Set(reviews.map(r => r.userId))].filter(Boolean);
+        const userIds = [...new Set(reviews.map(r => r.userId))]
+            .map(id => Number(id))
+            .filter(id => !isNaN(id) && id > 0);
 
         let userMap = {};
 
         if (userIds.length > 0) {
-            // 3. Récupération groupée
-            const users = await User.findAll({
-                where: { id: userIds },
-                attributes: ['id', 'username']
-            });
+            try {
+                const users = await User.findAll({
+                    where: { id: userIds },
+                    attributes: ['id', 'username']
+                });
 
-            // 4. Création d'une "Map" pour un accès instantané
-            userMap = users.reduce((acc, user) => {
-                acc[user.id] = user.username;
-                return acc;
-            }, {});
+                userMap = users.reduce((acc, user) => {
+                    acc[user.id] = user.username;
+                    return acc;
+                }, {});
+            } catch (error) {
+                console.error("Erreur Postgres lors du mapping des avis:", error);
+                // On ne bloque pas tout, on continue pour afficher au moins les avis
+            }
         }
 
+        // 4. Création d'une "Map" pour un accès instantané
         return reviews.map(review => {
-            // On s'assure d'avoir un objet simple
             const reviewObj = review.toObject ? review.toObject() : review;
 
             return {
                 ...reviewObj,
-                // On s'assure que userId reste un objet cohérent pour le frontend
                 userId: {
                     id: reviewObj.userId,
-                    username: userMap[reviewObj.userId] || "Utilisateur anonyme"
+                    username: userMap[reviewObj.userId] || "Anonyme (ID invalide)"
                 }
             };
         });
