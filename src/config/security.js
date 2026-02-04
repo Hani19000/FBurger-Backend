@@ -7,19 +7,47 @@ import { ERRORS } from '../constants/errors.js';
 import { logger } from '../utils/logger.js';
 import { HTTP_STATUS } from '../constants/httpStatus.js';
 
-const origins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173', 'https://fburger.vercel.app', 'http://localhost:5174'];
+const getAllowedOrigins = () => {
+    if (ENV.server.nodeEnv === 'production') {
+        return ['https://fburger.vercel.app'];
+    }
+    return [
+        'http://localhost:5173',
+        'http://localhost:3000'
+    ];
+};
+
+const origins = process.env.CORS_ORIGINS?.split(',') || getAllowedOrigins();
 
 export const helmetMiddleware = helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'"],
-            imgSrc: ["'self'", "data:", "blob:", "*"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: [
+                "'self'",
+                "data:",
+                "blob:",
+                "https://res.cloudinary.com",
+            ],
+            connectSrc: [
+                "'self'",
+                "https://fburger-420b.onrender.com",
+                "https://o4510681965199360.ingest.de.sentry.io"
+            ],
+            fontSrc: ["'self'", "data:"],
             objectSrc: ["'none'"],
+            mediaSrc: ["'self'"],
+            frameSrc: ["'none'"],
             upgradeInsecureRequests: [],
         },
     },
-    hsts: { maxAge: 31536000, includeSubDomains: true },
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true  // ← AJOUTER
+    },
 });
 
 export const compressionMiddleware = compression();
